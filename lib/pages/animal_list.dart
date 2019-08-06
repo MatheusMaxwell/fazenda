@@ -3,7 +3,7 @@ import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter/material.dart';
 
 class AnimalList extends StatelessWidget {
-  var _name;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +13,7 @@ class AnimalList extends StatelessWidget {
       ),
       body: _body(),
       drawer: _myDrawer(),
-      floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context, AnimalRegister()),
+      floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context, AnimalRegisterSetting()),
       child: Icon(
           Icons.add
       ),
