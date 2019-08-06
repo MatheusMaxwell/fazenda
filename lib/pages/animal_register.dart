@@ -57,9 +57,9 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
       ),
       body: Column(
         children: <Widget>[
-          _dropDown("Selecione o tipo", _animal.type, _dropDownMenuItems),
+          _dropDown("Selecione o tipo", _animal.type, _dropDownMenuItems, changedDropDownItem),
           TextInput(_animal.name, "Nome", TextInputType.text),
-          _dropDown("Selecione o sexo", _animal.sex, _dropDownSexItems),
+          _dropDown("Selecione o sexo", _animal.sex, _dropDownSexItems, changedDropDownItemSex),
           TextInput(_animal.sex, "Data Nascimento", TextInputType.number),
           BlueButton("Salvar")
         ],
@@ -67,7 +67,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
     );
   }
 
-  _dropDown(String hint, String value, List dropDown){
+  _dropDown(String hint, String value, List dropDown, Function onChanged){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
@@ -77,7 +77,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
             hint: Text(hint),
             value: value,
             items: dropDown,
-            onChanged: changedDropDownItem,
+            onChanged: onChanged,
           ),
         ],
       ),
@@ -88,6 +88,13 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
     print("Selected type $_selectedType, we are going to refresh the UI");
     setState(() {
       _animal.type = _selectedType;
+    });
+  }
+
+  void changedDropDownItemSex(String _selectedSex) {
+    print("Selected sex $_selectedSex, we are going to refresh the UI");
+    setState(() {
+      _animal.sex = _selectedSex;
     });
   }
 }
