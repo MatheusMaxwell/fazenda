@@ -1,5 +1,5 @@
 
-import 'package:FarmControl/pages/animal_list.dart';
+import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());

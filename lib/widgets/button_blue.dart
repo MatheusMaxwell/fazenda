@@ -14,7 +14,7 @@ class BlueButton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
           child: RaisedButton(
             child: Text(
               text,

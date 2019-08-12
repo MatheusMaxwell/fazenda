@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 
 class Animal {
 
-  String _type;
+  int _id;
+  int _species_id;
   String _name;
   String _sex;
   String _birthDate;
-  String _proprietary;
-  String _markProprietary;
+  int _proprietry_id;
   String _lossDate;
   String _agroProprietary;
 
-  String get type => _type;
-
-  set type(String value) {
-    _type = value;
-  }
 
   String get name => _name;
 
@@ -35,16 +30,11 @@ class Animal {
     _lossDate = value;
   }
 
-  String get markProprietary => _markProprietary;
 
-  set markProprietary(String value) {
-    _markProprietary = value;
-  }
+  int get id => _id;
 
-  String get proprietary => _proprietary;
-
-  set proprietary(String value) {
-    _proprietary = value;
+  set id(int value) {
+    _id = value;
   }
 
   String get birthDate => _birthDate;
@@ -57,6 +47,18 @@ class Animal {
 
   set sex(String value) {
     _sex = value;
+  }
+
+  int get species_id => _species_id;
+
+  set species_id(int value) {
+    _species_id = value;
+  }
+
+  int get proprietry_id => _proprietry_id;
+
+  set proprietry_id(int value) {
+    _proprietry_id = value;
   }
 
 

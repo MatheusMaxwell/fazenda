@@ -3,6 +3,7 @@ import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/widgets/button_blue.dart';
 import 'package:FarmControl/widgets/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:date_format/date_format.dart';
 
 
 class AnimalRegisterSetting extends StatefulWidget {
@@ -18,8 +19,8 @@ class AnimalRegisterSetting extends StatefulWidget {
 class AnimalRegister extends State<AnimalRegisterSetting> {
   var _animal = Animal();
   List _sexs = ["Macho", "Femea"];
-  List _types =
-  ["Bovino", "Equino"];
+  DateTime date = DateTime.now();
+  List _types = ["Bovino", "Equino"];
 
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   List<DropdownMenuItem<String>> _dropDownSexItems;
@@ -57,11 +58,28 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
       ),
       body: Column(
         children: <Widget>[
-          _dropDown("Selecione o tipo", _animal.type, _dropDownMenuItems, changedDropDownItem),
+          _dropDown("Espécie", _animal.name, _dropDownMenuItems, changedDropDownItem), //arrumar
           TextInput(_animal.name, "Nome", TextInputType.text),
-          _dropDown("Selecione o sexo", _animal.sex, _dropDownSexItems, changedDropDownItemSex),
-          TextInput(_animal.sex, "Data Nascimento", TextInputType.number),
+          _dropDown("Sexo", _animal.sex, _dropDownSexItems, changedDropDownItemSex),
+          _textDate("Data Nascimento"),
+          _datePicker(true),
+          TextInput(_animal.name, "Proprietário", TextInputType.text), //arrumar
+          _textDate("Data Venda/Perda"),
+          _datePicker(false),
+          TextInput(_animal.agroProprietary, "Proprietário Agro",  TextInputType.text),
           BlueButton("Salvar")
+        ],
+      ),
+    );
+  }
+
+  _textDate(String text){
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(text)
         ],
       ),
     );
@@ -69,7 +87,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
 
   _dropDown(String hint, String value, List dropDown, Function onChanged){
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -84,10 +102,39 @@ class AnimalRegister extends State<AnimalRegisterSetting> {
     );
   }
 
+  _datePicker(bool isDateBirth){
+    return FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(formatDate(date, [dd, '/', mm, '/', yyyy])),
+          Icon(Icons.calendar_today)
+        ],
+      ),
+      onPressed: () async {
+        final dtPicker = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime(DateTime.now().year+1));
+        if(dtPicker != null && dtPicker != date){
+          setState(() {
+            if(isDateBirth){
+              _animal.birthDate = dtPicker.toString();
+            }
+            else{
+              _animal.lossDate = dtPicker.toString();
+            }
+            date = dtPicker;
+          });
+        }
+      },
+    );
+  }
+
   void changedDropDownItem(String _selectedType) {
     print("Selected type $_selectedType, we are going to refresh the UI");
     setState(() {
-      _animal.type = _selectedType;
+      _animal.name = _selectedType; //arrumar
     });
   }
 

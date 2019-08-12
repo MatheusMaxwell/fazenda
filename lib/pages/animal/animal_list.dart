@@ -1,5 +1,7 @@
-import 'package:FarmControl/pages/animal_register.dart';
+import 'package:FarmControl/pages/animal/animal_register.dart';
+import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
 import 'package:FarmControl/utils/nav.dart';
+import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter/material.dart';
 
 class AnimalList extends StatelessWidget {
@@ -12,7 +14,7 @@ class AnimalList extends StatelessWidget {
         centerTitle: true,
       ),
       body: _body(),
-      drawer: _myDrawer(),
+      drawer: MyDrawer(),
       floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context, AnimalRegisterSetting()),
       child: Icon(
           Icons.add
@@ -23,22 +25,28 @@ class AnimalList extends StatelessWidget {
 
 
   _onPressed(BuildContext context, Widget page){
+
     push(context, page);
   }
 
-  _myDrawer(){
+  _myDrawer(BuildContext context){
     return Container(
       color: Colors.blue,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[_button("Animais"), _button("Vacina")],
+        children: <Widget>[
+          _button("Animais", AnimalList(), context),
+          _button("Vacina", AnimalList(), context),
+          _button("Proprietários", ProprietaryList(), context),
+          _button("Espécies", AnimalList(), context)
+        ],
       ),
     );
   }
 
-  _button(String name){
+  _button(String name, Widget page, BuildContext context){
     return RaisedButton(
-      onPressed: null,
+      onPressed: _onPressed(context, page),
       child: Text(
         name,
         style: TextStyle(
