@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 
 class Proprietary {
-  int _id;
-  String _name;
-  String _mark;
+  String id;
+  String name;
+  String mark;
+  String userId;
 
-  int get id => _id;
+  Proprietary({this.id, this.name, this.mark, this.userId});
 
-  set id(int value) {
-    _id = value;
-  }
+  Proprietary.fromMap(Map map, String id) :
+      id = id ?? '',
+      name = map['name'] ?? '',
+      mark = map['mark'] ?? '',
+      userId = map['userId'] ?? '';
 
-  String get name => _name;
-
-  set name(String value) {
-    _name = value;
-  }
-
-  String get mark => _mark;
-
-  set mark(String value) {
-    _mark = value;
+  toJson(){
+    return {
+      "name": name,
+      "mark": mark,
+      "userId": userId
+    };
   }
 
 

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
-class Species {
-  int _id;
-  String _specie;
+class Specie {
+  String id;
+  String specie;
+  String userId;
 
-  int get id => _id;
+  Specie({this.id, this.specie, this.userId});
 
-  set id(int value) {
-    _id = value;
+  Specie.fromMap(Map map, String id):
+      id = id ?? '',
+      specie = map['specie'] ?? '',
+      userId = map['userId'] ?? '';
+
+  toJson(){
+    return {
+      "specie": specie,
+      "userId": userId
+    };
   }
-
-  String get specie => _specie;
-
-  set specie(String value) {
-    _specie = value;
-  }
-
 
 }

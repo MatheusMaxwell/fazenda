@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 
 class Vaccine {
-  int _id;
-  String _label;
-  String _date;
+  String id;
+  String label;
+  String date;
+  String userId;
 
-  int get id => _id;
+  Vaccine({this.id, this.label, this.date, this.userId});
 
-  set id(int value) {
-    _id = value;
-  }
+  Vaccine.fromMap(Map map, String id):
+      id = id ?? '',
+      label = map['label'] ?? '',
+      date = map['date'] ?? '',
+      userId = map['userId']?? '';
 
-  String get label => _label;
-
-  set label(String valueString){
-    _label = valueString;
-  }
-
-  String get date => _date;
-
-  set date(String value) {
-    _date = value;
+  toJson(){
+    return{
+      "label": label,
+      "date": date
+    };
   }
 
 }

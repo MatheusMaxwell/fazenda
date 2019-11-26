@@ -1,27 +1,23 @@
-import 'package:flutter/material.dart';
 
 class VaccineAnimal {
-  int _id;
-  int _animal_id;
-  int _vaccine_id;
+  String id;
+  String animalId;
+  String vaccineId;
+  String userId;
 
-  int get id => _id;
+  VaccineAnimal({this.id, this.animalId, this.vaccineId, userId});
 
-  set id(int value) {
-    _id = value;
+  VaccineAnimal.fromMap(Map map, String id):
+      id = id ?? '',
+      animalId = map['animalId'] ?? '',
+      vaccineId = map['vaccineId'] ?? '',
+      userId = map['userId'] ?? '';
+
+  toJson(){
+    return{
+      "animal_id": animalId,
+      "vaccine_id": vaccineId
+    };
   }
-
-  int get animal_id => _animal_id;
-
-  set animal_id(int value) {
-    _animal_id = value;
-  }
-
-  int get vaccine_id => _vaccine_id;
-
-  set vaccine_id(int value) {
-    _vaccine_id = value;
-  }
-
 
 }
