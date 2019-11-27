@@ -19,7 +19,7 @@ class AnimalPresenter{
   AnimalContract view;
   AnimalPresenter(this.view);
   var _api = new AnimalApi();
-  var _apiSpecie = new SpecieApi();
+
 
 
   getAnimals() async{

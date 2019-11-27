@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_presenter.dart';
 import 'package:FarmControl/utils/Components.dart';
+import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/MyMediaQuery.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter/material.dart';
@@ -240,7 +241,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     }
     SystemChrome.setEnabledSystemUIOverlays([]);
     Future.delayed(Duration(seconds: 1)).then((_) {
-      push(context, AnimalList());
+      Navigator.of(context).pushReplacementNamed(Constants.ANIMAL_LIST_PAGE);
     });
 
   }

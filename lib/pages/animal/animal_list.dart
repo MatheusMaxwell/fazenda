@@ -3,6 +3,7 @@ import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/pages/animal/animal_presenter.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
+import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/cards.dart';
 import 'package:FarmControl/widgets/empty_container.dart';
@@ -14,8 +15,7 @@ class AnimalList extends StatefulWidget {
   _AnimalListState createState() => _AnimalListState();
 }
 
-class _AnimalListState extends State<AnimalList>  implements AnimalContract{
-
+class _AnimalListState extends State<AnimalList> implements AnimalContract{
   bool listIsEmpty = null;
   List<Animal> animals;
   List<Specie> species;
@@ -40,22 +40,18 @@ class _AnimalListState extends State<AnimalList>  implements AnimalContract{
         centerTitle: true,
       ),
       body: _body(),
-      drawer: MyDrawer(),
-      floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context, AnimalRegisterSetting()),
-      child: Icon(
-          Icons.add
-      ),
+      drawer: myDrawer(context),
+      floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context),
+        child: Icon(
+            Icons.add
+        ),
       ),
     );
   }
 
-
-  _onPressed(BuildContext context, Widget page){
-    push(context, page);
+  _onPressed(BuildContext context){
+    Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE);
   }
-
-
-
 
   _body(){
     if(listIsEmpty == null){
@@ -73,13 +69,9 @@ class _AnimalListState extends State<AnimalList>  implements AnimalContract{
           itemCount: animals.length,
           itemBuilder: (BuildContext context, int index){
             return GestureDetector(
-              onTap: (){
-
-              },
               child: cardTitleSubtitle(animals[index].name, animals[index].specie),
             );
           },
-
         ),
       );
     }
@@ -128,6 +120,5 @@ class _AnimalListState extends State<AnimalList>  implements AnimalContract{
   void speciesNotFound() {
     // TODO: implement specieNotFound
   }
-
-
 }
+

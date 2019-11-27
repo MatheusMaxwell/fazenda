@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: _body(context),
-      drawer: MyDrawer(),
+      drawer: myDrawer(context),
     );
   }
 

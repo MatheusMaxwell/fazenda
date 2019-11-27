@@ -16,7 +16,7 @@ class VaccineList extends StatelessWidget {
         centerTitle: true,
       ),
       body: _body(),
-      drawer: MyDrawer(),
+      drawer: myDrawer(context),
       floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context, AnimalRegisterSetting()),
         child: Icon(
             Icons.add

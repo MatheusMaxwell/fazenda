@@ -1,6 +1,7 @@
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_page.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
+import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/MyMediaQuery.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter/material.dart';
@@ -34,13 +35,12 @@ class _SplashState extends State<Splash> {
   }
 
   void _callPage()async{
-    push(context, AnimalList());
     var user = await ApplicationSingleton.baseAuth.getCurrentUser();
     if (user != null) {
       ApplicationSingleton.currentUser = user;
-      push(context, AnimalList());
+      Navigator.of(context).pushReplacementNamed(Constants.ANIMAL_LIST_PAGE);
     } else {
-      push(context, LoginPage());
+      Navigator.of(context).pushReplacementNamed(Constants.LOGIN_PAGE);
     }
 
   }
