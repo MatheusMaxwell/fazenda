@@ -2,8 +2,8 @@
 
 import 'package:FarmControl/data/firebase/ApiFirebase.dart';
 import 'package:FarmControl/model/animal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase/firestore.dart';
+import 'package:flutter_web/material.dart';
 
 class AnimalApi extends ChangeNotifier {
   ApiFirebase _api = new ApiFirebase('animal');
@@ -11,8 +11,8 @@ class AnimalApi extends ChangeNotifier {
 
   Future<List<Animal>> getAnimals() async {
     var result = await _api.getDataCollection();
-    animals = result.documents
-        .map((doc) => Animal.fromMap(doc.data, doc.documentID))
+    animals = result.docs
+        .map((doc) => Animal.fromMap(doc.data(), doc.id))
         .toList();
     return animals;
   }
@@ -23,7 +23,7 @@ class AnimalApi extends ChangeNotifier {
 
   Future<Animal> getAnimalById(String id) async {
     var doc = await _api.getDocumentById(id);
-    return  Animal.fromMap(doc.data, doc.documentID) ;
+    return  Animal.fromMap(doc.data(), doc.id) ;
   }
 
 

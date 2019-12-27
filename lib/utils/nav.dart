@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_web/material.dart';
 
 Future push (BuildContext context, Widget page){
   return Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {

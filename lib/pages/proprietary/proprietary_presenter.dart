@@ -1,7 +1,7 @@
 
 import 'package:FarmControl/data/api/ProprietaryApi.dart';
 import 'package:FarmControl/model/proprietary.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firestore.dart';
 
 abstract class ProprietaryContract{
   void listProprietaries(List<Proprietary> proprietaries);
@@ -32,7 +32,7 @@ class ProprietaryPresenter {
   addProprietary(Proprietary prop)async{
     try{
       DocumentReference df = await _api.addProprietary(prop);
-      if(df.documentID.isNotEmpty)
+      if(df.id.isNotEmpty)
         view.insertSuccess();
       else
         view.insertFailed();

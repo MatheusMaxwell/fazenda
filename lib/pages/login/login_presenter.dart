@@ -1,7 +1,6 @@
 
-
-
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
+import 'package:firebase/firebase.dart';
 
 abstract class LoginContract{
   loginSuccess(bool stopAnimation);
@@ -17,9 +16,9 @@ class LoginPresenter{
   LoginPresenter(this.view);
   login(String email, String password) async{
     try{
-      var userId = await baseAuth.signIn(email, password);
-      if(userId.length > 0 && userId != null){
-        ApplicationSingleton.currentUser = await baseAuth.getCurrentUser();
+      UserCredential user = await baseAuth.signInWithCredentials(email, password);
+      if(user.user.uid != null){
+        ApplicationSingleton.currentUser = await baseAuth.getUser();
         view.loginSuccess(true);
       }
       else{

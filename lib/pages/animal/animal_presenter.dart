@@ -5,7 +5,7 @@ import 'package:FarmControl/data/api/SpecieApi.dart';
 import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firestore.dart';
 
 abstract class AnimalContract{
   void onError();
@@ -44,7 +44,7 @@ class AnimalPresenter{
   addAnimal(Animal animal) async {
     try{
       DocumentReference insert = await _api.addAnimal(animal);
-      if(insert.documentID.isNotEmpty)
+      if(insert.id.isNotEmpty)
         view.insertSuccess();
       else
         view.insertFailed();

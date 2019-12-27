@@ -1,53 +1,68 @@
-import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class BaseAuth {
-  Future<String> signIn(String email, String password);
+import 'package:firebase/firebase.dart';
+import 'package:meta/meta.dart';
 
-  Future<String> signUp(String email, String password);
+@immutable
+class UserRepository {
+  UserRepository({Auth firebaseAuth, GoogleAuthProvider googleSignin})
+      : _firebaseAuth = firebaseAuth ?? auth(),
+        _googleSignIn = googleSignin ?? GoogleAuthProvider();
 
-  Future<FirebaseUser> getCurrentUser();
+  final Auth _firebaseAuth;
+  final GoogleAuthProvider _googleSignIn;
 
-  Future<void> sendEmailVerification();
-
-  Future<void> signOut();
-
-  Future<bool> isEmailVerified();
-}
-
-class Auth implements BaseAuth {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  Future<String> signIn(String email, String password) async {
-    AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-    FirebaseUser user = result.user;
-    return user.uid;
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      return await _firebaseAuth.signInWithPopup(_googleSignIn);
+    } catch (e) {
+      print('Error in sign in with google: $e');
+      throw '$e';
+    }
   }
 
-  Future<String> signUp(String email, String password) async {
-    AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    FirebaseUser user = result.user;
-    return user.uid;
+  Future<UserCredential> signInWithCredentials(
+      String email, String password) async {
+    try {
+      return await _firebaseAuth.signInWithEmailAndPassword(email, password);
+    } catch (e) {
+      print('Error in sign in with credentials: $e');
+      // return e;
+      throw '$e';
+    }
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
+  Future<UserCredential> signUp({String email, String password}) async {
+    try {
+      return await _firebaseAuth.createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+    } catch (e) {
+      print('Error siging in with credentials: $e');
+      throw '$e';
+      // throw Error('Error signing up with credentials: $e');
+      // return e;
+    }
   }
 
-  Future<void> signOut() async {
-    return _firebaseAuth.signOut();
+  Future<dynamic> signOut() async {
+    try {
+      return Future.wait([
+        _firebaseAuth.signOut(),
+      ]);
+    } catch (e) {
+      print ('Error signin out: $e');
+      // return e;
+      throw '$e';
+    }
   }
 
-  Future<void> sendEmailVerification() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    user.sendEmailVerification();
+  Future<bool> isSignedIn() async {
+    final currentUser = _firebaseAuth.currentUser;
+    return currentUser != null;
   }
 
-  Future<bool> isEmailVerified() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user.isEmailVerified;
+  Future<String> getUser() async {
+    return (_firebaseAuth.currentUser).uid;
   }
 }

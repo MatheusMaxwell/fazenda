@@ -1,7 +1,7 @@
 
 import 'package:FarmControl/data/api/SpecieApi.dart';
 import 'package:FarmControl/model/species.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firestore.dart';
 
 abstract class SpecieContract{
   void returnSpecies(List<Specie> species);
@@ -34,7 +34,7 @@ class SpeciePresenter{
   addSpecie(Specie specie)async{
     try{
       DocumentReference df = await _api.addSpecie(specie);
-      if(df.documentID.isNotEmpty)
+      if(df.id.isNotEmpty)
         view.insertSuccess();
       else
         view.insertFailed();

@@ -4,16 +4,10 @@ import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_presenter.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:FarmControl/utils/LocalAuthenticationService.dart';
 import 'package:FarmControl/utils/MyMediaQuery.dart';
-import 'package:FarmControl/utils/ServiceLocator.dart';
 import 'package:FarmControl/utils/nav.dart';
-import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/error_codes.dart' as auth_error;
-import 'package:local_auth/auth_strings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_web/material.dart';
+import 'package:flutter_web/services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -33,9 +27,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
   Animation _animation;
   GlobalKey _globalKey = GlobalKey();
   AnimationController _controller;
-  bool isAuthenticateBiometrics = false;
-
-  final LocalAuthenticationService _localAuth = locator<LocalAuthenticationService>();
 
   //Password Visibility
   bool _isHidden = true;
@@ -53,15 +44,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     _presenter = LoginPresenter(this);
   }
 
-  @override
-  void initState() {
-    _getFlagBiometrics();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    _authenticate();
     return new Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.blue,
@@ -182,22 +167,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     _controller.stop();
   }
 
-  void _authenticate()async{
-    if(isAuthenticateBiometrics){
-      await _localAuth.authenticate;
-      if(_localAuth.isAuthenticated)
-        loginSuccess(true);
-    }
-  }
-
-  void _getFlagBiometrics() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isAuthenticateBiometrics = prefs.getBool(Constants.PREFERENCES_BIOMETRICS);
-      if(isAuthenticateBiometrics == null)
-        isAuthenticateBiometrics = false;
-    });
-  }
 
   //Function animation button in login
   void _animateButton() {

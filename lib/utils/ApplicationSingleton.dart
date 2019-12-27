@@ -1,7 +1,7 @@
 
 import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase/firebase.dart';
+import 'package:flutter_web/material.dart';
 
 class ApplicationSingleton {
   static ApplicationSingleton _instance;
@@ -11,7 +11,7 @@ class ApplicationSingleton {
   }
   ApplicationSingleton._internalConstructor();
 
-  static Auth baseAuth;
-  static FirebaseUser currentUser;
+  static UserRepository baseAuth;
+  static String currentUser;
 
 }

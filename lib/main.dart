@@ -1,5 +1,6 @@
 
 
+import 'package:FarmControl/data/firebase/FirebaseHelper.dart';
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/pages/login/login_page.dart';
@@ -8,8 +9,8 @@ import 'package:FarmControl/pages/settings/settings_page.dart';
 import 'package:FarmControl/pages/splash_screen/splash_screen.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:FarmControl/utils/ServiceLocator.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase/firebase.dart';
+import 'package:flutter_web/material.dart';
 
 import 'data/firebase/FirebaseAuthentication.dart';
 
@@ -27,8 +28,7 @@ final routes = {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    setupLocator();
-    ApplicationSingleton.baseAuth = new Auth();
+    FirebaseHelper.initDatabase();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "FarmControl",

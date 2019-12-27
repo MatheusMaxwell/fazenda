@@ -2,8 +2,8 @@
 
 import 'package:FarmControl/data/firebase/ApiFirebase.dart';
 import 'package:FarmControl/model/proprietary.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase/firestore.dart';
+import 'package:flutter_web/material.dart';
 
 class ProprietaryApi extends ChangeNotifier {
   ApiFirebase _api = new ApiFirebase('proprietary');
@@ -11,8 +11,8 @@ class ProprietaryApi extends ChangeNotifier {
 
   Future<List<Proprietary>> getProprietaries() async {
     var result = await _api.getDataCollection();
-    proprietaries = result.documents
-        .map((doc) => Proprietary.fromMap(doc.data, doc.documentID))
+    proprietaries = result.docs
+        .map((doc) => Proprietary.fromMap(doc.data(), doc.id))
         .toList();
     return proprietaries;
   }
@@ -23,7 +23,7 @@ class ProprietaryApi extends ChangeNotifier {
 
   Future<Proprietary> getProprietaryById(String id) async {
     var doc = await _api.getDocumentById(id);
-    return  Proprietary.fromMap(doc.data, doc.documentID) ;
+    return  Proprietary.fromMap(doc.data(), doc.id) ;
   }
 
 

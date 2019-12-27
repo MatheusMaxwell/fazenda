@@ -1,7 +1,7 @@
 import 'package:FarmControl/data/firebase/ApiFirebase.dart';
 import 'package:FarmControl/model/species.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase/firestore.dart';
+import 'package:flutter_web/material.dart';
 
 class SpecieApi extends ChangeNotifier {
   ApiFirebase _api = new ApiFirebase('specie');
@@ -9,8 +9,8 @@ class SpecieApi extends ChangeNotifier {
 
   Future<List<Specie>> getSpecies() async {
     var result = await _api.getDataCollection();
-    species = result.documents
-        .map((doc) => Specie.fromMap(doc.data, doc.documentID))
+    species = result.docs
+        .map((doc) => Specie.fromMap(doc.data(), doc.id))
         .toList();
     return species;
   }
@@ -21,7 +21,7 @@ class SpecieApi extends ChangeNotifier {
 
   Future<Specie> getSpecieById(String id) async {
     var doc = await _api.getDocumentById(id);
-    return  Specie.fromMap(doc.data, doc.documentID) ;
+    return  Specie.fromMap(doc.data(), doc.id) ;
   }
 
 
