@@ -1,7 +1,6 @@
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_page.dart';
 import 'package:FarmControl/pages/settings/settings_page.dart';
-import 'package:FarmControl/pages/vaccine/vaccine_list.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +18,8 @@ Widget myDrawer(BuildContext context) {
         ),
         ListTile(
           leading: Icon(Icons.list),
-          title: Text("Vacinas", style: TextStyle(fontSize: 22)),
-          onTap: () => Navigator.of(context).pushReplacementNamed(Constants.VACCINE_LIST_PAGE)
+          title: Text("Relatórios", style: TextStyle(fontSize: 22)),
+          onTap: () => Navigator.of(context).pushReplacementNamed(Constants.REPORTS_PAGE)
         ),
         ListTile(
           leading: Icon(Icons.settings),

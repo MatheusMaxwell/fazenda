@@ -34,15 +34,8 @@ class _SplashState extends State<Splash> {
     );
   }
 
-  void _callPage()async{
-    var user = await ApplicationSingleton.baseAuth.getCurrentUser();
-    if (user != null) {
-      ApplicationSingleton.currentUser = user;
-      Navigator.of(context).pushReplacementNamed(Constants.ANIMAL_LIST_PAGE);
-    } else {
+  void _callPage(){
       Navigator.of(context).pushReplacementNamed(Constants.LOGIN_PAGE);
-    }
-
   }
 }
 

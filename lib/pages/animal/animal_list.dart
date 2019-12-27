@@ -1,8 +1,10 @@
 import 'package:FarmControl/model/animal.dart';
+import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/pages/animal/animal_presenter.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
+import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/cards.dart';
@@ -21,6 +23,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   List<Specie> species;
   AnimalPresenter presenter;
   List<String> animalsString = new List<String>();
+  final scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _AnimalListState(){
     presenter = AnimalPresenter(this);
@@ -40,6 +43,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         centerTitle: true,
       ),
       body: _body(),
+      key: scaffoldKey,
       drawer: myDrawer(context),
       floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context),
         child: Icon(
@@ -50,7 +54,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   }
 
   _onPressed(BuildContext context){
-    Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE);
+    Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE).then((val)=>val?presenter.getAnimals():null);
   }
 
   _body(){
@@ -108,7 +112,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   @override
   void onError() {
-    // TODO: implement onError
+    showSnackBar("Algo de errado aconteceu. Por favor, tente novamente.", scaffoldKey);
   }
 
   @override
@@ -119,6 +123,16 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   @override
   void speciesNotFound() {
     // TODO: implement specieNotFound
+  }
+
+  @override
+  void proprietaryNotFound() {
+    // TODO: implement proprietaryNotFound
+  }
+
+  @override
+  void returnProprietaries(List<Proprietary> proprietaries) {
+    // TODO: implement returnProprietaries
   }
 }
 

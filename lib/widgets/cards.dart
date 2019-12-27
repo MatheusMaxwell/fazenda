@@ -45,7 +45,7 @@ Widget cardTitleSubtitle(String title, String subtitle){
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(title, style: TextStyle(fontSize: 26),),
+                  Text(title, style: TextStyle(fontSize: 26, color: Colors.black),),
                   Text(subtitle, style: TextStyle(fontSize: 22, color: Colors.grey),),
                 ],
               ),

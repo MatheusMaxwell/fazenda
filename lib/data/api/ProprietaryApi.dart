@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ProprietaryApi extends ChangeNotifier {
-  ApiFirebase _api = new ApiFirebase('animal');
+  ApiFirebase _api = new ApiFirebase('proprietary');
   List<Proprietary> proprietaries;
 
   Future<List<Proprietary>> getProprietaries() async {

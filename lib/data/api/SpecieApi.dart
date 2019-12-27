@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SpecieApi extends ChangeNotifier {
-  ApiFirebase _api = new ApiFirebase('animal');
+  ApiFirebase _api = new ApiFirebase('specie');
   List<Specie> species;
 
   Future<List<Specie>> getSpecies() async {
