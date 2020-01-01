@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_presenter.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:FarmControl/utils/MyMediaQuery.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter_web/material.dart';
 import 'package:flutter_web/services.dart';
+import '../../utils/ApplicationSingleton.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -47,6 +50,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
     return new Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.blue,
@@ -59,9 +63,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(20),
-                child: Image.asset("assets/images/logo.png",
-                  width: 300,
-                  height: 250,
+                child: Image.asset("images/logo.png",
+                  width: mediaQuery.size.width*0.3,
+                  height: mediaQuery.size.height*0.3,
                 ),
               ),
               Expanded(
@@ -75,11 +79,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: MyMediaQuery.size.height*0.3,
+                    height: mediaQuery.size.height*0.2,
                   ),
                   Container(
-                    width: MyMediaQuery.size.width*0.9,
-                    height: MyMediaQuery.size.height*0.35,
+                    width: mediaQuery.size.width*0.5,
+                    height: mediaQuery.size.height*0.4,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8.0),
@@ -107,7 +111,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                             children: <Widget>[
                               InkWell(
                                 child: Container(
-                                  width: MyMediaQuery.size.width*0.77,
+                                  width: mediaQuery.size.width*0.475,
                                   height: 60,
                                   child: Material(
                                     child: InkWell(
@@ -134,7 +138,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                                                       _isPressed = true;
                                                       _state = 1;
                                                       _animateButton();
-                                                      _presenter.login(_loginController.text, _passwordController.text);
+                                                      _presenter.login(_loginController.text, _passwordController.text, context);
                                                     });
                                                   }
                                                 },
@@ -238,7 +242,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     }
     SystemChrome.setEnabledSystemUIOverlays([]);
     Future.delayed(Duration(seconds: 1)).then((_) {
-      Navigator.of(context).pushReplacementNamed(Constants.ANIMAL_LIST_PAGE);
+      navigatorReplace(context, Constants.ANIMAL_LIST_PAGE);
     });
 
   }

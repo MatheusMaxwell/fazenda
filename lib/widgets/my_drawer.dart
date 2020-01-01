@@ -14,17 +14,17 @@ Widget myDrawer(BuildContext context) {
         ListTile(
           leading: Icon(Icons.list),
           title: Text("Animais", style: TextStyle(fontSize: 22),),
-          onTap: () => Navigator.of(context).pushReplacementNamed(Constants.ANIMAL_LIST_PAGE)
+          onTap: () => navigatorReplace(context,Constants.ANIMAL_LIST_PAGE)
         ),
         ListTile(
           leading: Icon(Icons.list),
           title: Text("Relatórios", style: TextStyle(fontSize: 22)),
-          onTap: () => Navigator.of(context).pushReplacementNamed(Constants.REPORTS_PAGE)
+          onTap: () => navigatorReplace(context, Constants.REPORTS_PAGE)
         ),
         ListTile(
           leading: Icon(Icons.settings),
           title: Text("Configurações", style: TextStyle(fontSize: 22)),
-          onTap: () => Navigator.of(context).pushReplacementNamed(Constants.SETTINGS_PAGE)
+          onTap: () => navigatorReplace(context, Constants.SETTINGS_PAGE)
         ),
         SizedBox(
           height: 10,
@@ -61,7 +61,7 @@ Widget _containerHead(BuildContext context){
         height: 200,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: ExactAssetImage('assets/images/logo.png'),
+                image: ExactAssetImage('images/logo.png'),
                 fit: BoxFit.cover
             )
         )

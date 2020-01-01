@@ -30,3 +30,30 @@ Future<void> alertOk(BuildContext context, String title, String content) {
   );
 }
 
+//Alerta botao ok
+Future<bool> alertYesOrNo(BuildContext context, String name, String content) {
+  return showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(name),
+        content: Text(content),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Sim'),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+          FlatButton(
+            child: Text('Não'),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+

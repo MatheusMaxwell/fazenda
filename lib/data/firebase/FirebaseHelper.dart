@@ -1,10 +1,10 @@
-import 'package:firebase/firebase.dart' as fb;
+import 'package:firebase/firebase.dart';
 
 class FirebaseHelper {
-  static fb.Database initDatabase() {
+  static Database initDatabase() {
     try {
-      if (fb.apps.isEmpty) {
-        fb.initializeApp(
+      //if (fb.apps.isEmpty) {
+        initializeApp(
             apiKey: "AIzaSyB9dcALmEUqPc9cU6X2WfvqSR8-L8RhkK4",
             authDomain: "farmcontrol-2069e.firebaseapp.com",
             databaseURL: "https://farmcontrol-2069e.firebaseio.com",
@@ -12,10 +12,10 @@ class FirebaseHelper {
             storageBucket: "farmcontrol-2069e.appspot.com",
             messagingSenderId: "411284470737",
         );
-      }
-    } on fb.FirebaseJsNotLoadedException catch (e) {
+      //}
+    } on FirebaseJsNotLoadedException catch (e) {
       print(e);
     }
-    return fb.database();
+    return database();
   }
 }

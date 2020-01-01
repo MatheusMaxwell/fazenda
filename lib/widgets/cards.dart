@@ -37,6 +37,7 @@ Widget cardTitleSubtitle(String title, String subtitle){
     child: Container(
       height: 80.0,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
             height: 60.0,
@@ -50,7 +51,7 @@ Widget cardTitleSubtitle(String title, String subtitle){
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     ),

@@ -1,5 +1,6 @@
 import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
 import 'package:FarmControl/pages/species/species_list.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:flutter_web/material.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
@@ -28,15 +29,20 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _body(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: ListView(
-        children: <Widget>[
-          _listTItle("Proprietários", context, ProprietaryList()),
-          _listTItle("Espécies", context, SpecieList()),
-        ],
-      ),
-    );
+    if(ApplicationSingleton.currentUser == null) {
+      redirectLogin(context);
+    }
+    else {
+      return Container(
+        color: Colors.white,
+        child: ListView(
+          children: <Widget>[
+            _listTItle("Proprietários", context, ProprietaryList()),
+            _listTItle("Espécies", context, SpecieList()),
+          ],
+        ),
+      );
+    }
   }
 
   _listTItle(String title, BuildContext context, Widget page){

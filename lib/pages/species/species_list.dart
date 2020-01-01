@@ -2,6 +2,7 @@ import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/pages/species/specie_presenter.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/cards.dart';
@@ -21,6 +22,9 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   SpeciePresenter presenter;
   Specie newSpecie;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  var _tapPosition;
+  bool isUpdate = false;
 
   _SpeciesListState(){
     presenter = SpeciePresenter(this);
@@ -40,9 +44,10 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
         centerTitle: true,
       ),
       key: scaffoldKey,
-      body: _body(),
+      body: _body(context),
       floatingActionButton: FloatingActionButton(
         onPressed: ()async{
+          isUpdate = false;
           newSpecie = await _showDialog(context);
           if(newSpecie != null){
             setState(() {
@@ -59,14 +64,21 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
   }
 
   Future<Specie> _showDialog(BuildContext context) async {
-    Specie specie = new Specie();
-
+    Specie specie;
+    var textController = TextEditingController();
+    if(isUpdate){
+      specie = ApplicationSingleton.specie;
+      textController.text = specie.specie;
+    }
+    else{
+      specie = new Specie();
+    }
     return showDialog<Specie>(
       context: context,
       barrierDismissible: false, // dialog is dismissible with a tap on the barrier
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Informe um nome para a categoria'),
+          title: Text('Espécie'),
           content: new Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -77,6 +89,7 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
                 onChanged: (value) {
                   specie.specie = value;
                 },
+                controller: textController,
                 autofocus: true,
               ),
             ],
@@ -100,67 +113,86 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
     );
   }
 
-  _body() {
-    if(listIsEmpty == null){
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+  _body(BuildContext context) {
+    if(ApplicationSingleton.currentUser == null){
+      redirectLogin(context);
     }
-    else if(listIsEmpty){
-      return emptyContainer("Nenhuma espécie encontrada");
-    }
-    else{
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-        child: ListView.builder(
-          itemCount: species.length,
-          itemBuilder: (BuildContext context, int index){
-            return Dismissible(
-              key: Key(species[index].id),
-              background: slideRightBackground(),
-              secondaryBackground: slideLeftBackground(),
-              child: GestureDetector(
-                  child: cardSingleText(species[index].specie)
-              ),
-              // ignore: missing_return
-              confirmDismiss: (direction) async{
-                if(direction == DismissDirection.endToStart){
-                  if(await dialogDelete(species[index].specie)){
-                    presenter.deleteSpecie(species[index].id);
-                  }
-                }
+    else {
+      if (listIsEmpty == null) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      else if (listIsEmpty) {
+        return emptyContainer("Nenhuma espécie encontrada");
+      }
+      else {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () async{
+              listIsEmpty = null;
+              await presenter.getSpecies();
+            },
+            child: ListView.builder(
+              itemCount: species.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: cardSingleText(species[index].specie),
+                  onTapDown: _storePosition,
+                  onLongPress: () async{
+                    String ret = await _showPopupMenu();
+                    if(ret.contains('delete')) {
+                      if (await alertYesOrNo(context, species[index].specie, "Realmente deseja deletar?")) {
+                        presenter.deleteSpecie(species[index]);
+                      }
+                    }
+                    else {
+                      isUpdate = true;
+                      ApplicationSingleton.specie = species[index];
+                      newSpecie = await _showDialog(context);
+                      if(newSpecie != null){
+                        setState(() {
+                          listIsEmpty = null;
+                        });
+                        presenter.addSpecie(newSpecie);
+                      }
+                    }
+                  },
+                );
               },
-            );
-          },
-        ),
-      );
+            ),
+          ),
+        );
+      }
     }
   }
 
-  Future<bool> dialogDelete(String specie){
-    return showDialog<bool>(
+  Future<String> _showPopupMenu() async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    return await showMenu(
       context: context,
-      barrierDismissible: false, // dialog is dismissible with a tap on the barrier
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Realmente deseja excluir $specie ?'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('SIM'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            FlatButton(
-              child: Text('NÃO'),
-              onPressed: (){
-                Navigator.of(context).pop(false);
-              },
-            )
-          ],
-        );
-      },
+      position: RelativeRect.fromRect(
+          _tapPosition & Size(40, 40), // smaller rect, the touch area
+          Offset.zero & overlay.size // Bigger rect, the entire screen
+      ),
+      items: [
+        PopupMenuItem(
+          child: Text("Editar"),
+          value: 'edit',
+        ),
+        PopupMenuItem(
+          child: Text("Deletar"),
+          value: 'delete',
+        ),
+      ],
+      elevation: 8.0,
     );
+  }
+
+  void _storePosition(TapDownDetails details) {
+    _tapPosition = details.globalPosition;
   }
 
   Widget slideRightBackground() {
@@ -261,6 +293,22 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
   @override
   void removeSuccess() {
     showSnackBar("Especie removida!", scaffoldKey);
+    presenter.getSpecies();
+  }
+
+  @override
+  void specieInUse() {
+    alertOk(context, "Erro ao deletar", "Espécie já associada a algum animal.");
+  }
+
+  @override
+  void updateFailed() {
+    showSnackBar("Erro ao atualizar a espécie. Tente novamente.", scaffoldKey);
+  }
+
+  @override
+  void updateSuccess() {
+    showSnackBar("Especie atualizada!", scaffoldKey);
     presenter.getSpecies();
   }
 

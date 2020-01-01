@@ -1,3 +1,5 @@
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
+import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter_web/material.dart';
 
@@ -14,6 +16,12 @@ class _ReportsPageState extends State<ReportsPage> {
         title: Text("Relatórios"),
       ),
       drawer: myDrawer(context),
+      body: _body(context),
     );
+  }
+
+  _body(BuildContext context){
+    if(ApplicationSingleton.currentUser == null)
+      redirectLogin(context);
   }
 }

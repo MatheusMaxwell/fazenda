@@ -3,13 +3,16 @@ import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/pages/animal/animal_presenter.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
+import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/button_blue.dart';
 import 'package:FarmControl/widgets/text_input.dart';
 import 'package:flutter_web/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter_web/services.dart';
+import 'package:intl/intl.dart';
 
 
 class AnimalRegisterSetting extends StatefulWidget {
@@ -37,7 +40,9 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   bool propReady = false;
   bool checkLossDate = false;
   bool updating = true;
-
+  bool isUpdate = false;
+  final nameController = TextEditingController();
+  final codeController = TextEditingController();
 
   AnimalRegister(){
     presenter = AnimalPresenter(this);
@@ -60,7 +65,14 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
         updating = false;
       });
     }
-    return _body();
+    if(ApplicationSingleton.animal != null){
+      isUpdate = true;
+      _animal = ApplicationSingleton.animal;
+      nameController.text = _animal.name;
+      codeController.text = _animal.code;
+      
+    }
+    return _body(context);
   }
 
   List<DropdownMenuItem<String>> getDropDownMenuItems(List list) {
@@ -76,65 +88,71 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   
   
 
-  _body(){
-    if(updating){
-      return Container(
-        color: Colors.white,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+  _body(BuildContext context){
+    if(ApplicationSingleton.currentUser == null){
+      redirectLogin(context);
     }
     else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Registro"),
-        ),
-        key: scaffoldKey,
-        body: Column(
-          children: <Widget>[
-            _dropDown("Espécie", _animal.specie, _dropDownSpecies,
-                changedDropDownItem), //arrumar
-            textInput(true, TextInputType.text, "Nome"),
-            _dropDown(
-                "Sexo", _animal.sex, _dropDownSexItems, changedDropDownItemSex),
-            SizedBox(
-              height: 15,
-            ),
-            _textDate("Data Nascimento"),
-            _datePicker(true),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(
-                    "Data Venda/Perda", style: TextStyle(fontSize: 17),),
-                ),
-                Checkbox(
-                  value: checkLossDate,
-                  onChanged: (bool value) {
-                    setState(() {
-                      checkLossDate = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-            // ignore: sdk_version_ui_as_code
-            if(checkLossDate) _datePicker(false),
-            _dropDown(
-                "Proprietário", _animal.proprietary, _dropDownProprietaries,
-                changedDropDownProprietary),
-            _dropDown("Proprietário Agro", _animal.agroProprietary,
-                _dropDownProprietaries, changedDropDownProprietaryAgro),
-            textInput(false, TextInputType.number, "Código brinco"),
-            BlueButton("Salvar", onPressed: onPressedButton,)
-          ],
-        ),
-      );
+      if (updating) {
+        return Container(
+          color: Colors.white,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      else {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Registro"),
+          ),
+          key: scaffoldKey,
+          body: Column(
+            children: <Widget>[
+              _dropDown("Espécie", _animal.specie, _dropDownSpecies,
+                  changedDropDownItem), //arrumar
+              textInput(true, TextInputType.text, "Nome"),
+              _dropDown(
+                  "Sexo", _animal.sex, _dropDownSexItems,
+                  changedDropDownItemSex),
+              SizedBox(
+                height: 15,
+              ),
+              _textDate("Data Nascimento"),
+              _datePicker(true),
+              SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      "Data Venda/Perda", style: TextStyle(fontSize: 17),),
+                  ),
+                  Checkbox(
+                    value: checkLossDate,
+                    onChanged: (bool value) {
+                      setState(() {
+                        checkLossDate = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              // ignore: sdk_version_ui_as_code
+              if(checkLossDate) _datePicker(false),
+              _dropDown(
+                  "Proprietário", _animal.proprietary, _dropDownProprietaries,
+                  changedDropDownProprietary),
+              _dropDown("Proprietário Agro", _animal.agroProprietary,
+                  _dropDownProprietaries, changedDropDownProprietaryAgro),
+              textInput(false, TextInputType.number, "Código brinco"),
+              BlueButton("Salvar", onPressed: onPressedButton,)
+            ],
+          ),
+        );
+      }
     }
   }
   
@@ -145,6 +163,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextField(
+                controller: isName ? nameController : codeController,
                 decoration: InputDecoration(
                   hintText: hint,
                 ),
@@ -168,7 +187,13 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     setState(() {
       updating = true;
     });
-    presenter.addAnimal(_animal);
+    if(isUpdate){
+      presenter.updateAnimal(_animal);
+    }
+    else{
+      presenter.addAnimal(_animal);
+    }
+
   }
 
   _textDate(String text){
@@ -201,6 +226,19 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   }
 
   _datePicker(bool isDateBirth){
+      if(isUpdate){
+        if(isDateBirth){
+          date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.birthDate).toString());
+        }
+        else{
+          if(_animal.lossDate != null){
+            date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.lossDate).toString());
+          }
+          else{
+            date = DateTime.now();
+          }
+        }
+      }
       return FlatButton(
         child: Row(
           children: <Widget>[
@@ -211,7 +249,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
         onPressed: () async {
           final dtPicker = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
+              initialDate: date,
               firstDate: DateTime(1900),
               lastDate: DateTime(DateTime.now().year+1));
           if(dtPicker != null && dtPicker != date){
@@ -340,6 +378,29 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     setState(() {
       this.proprietaries = proprietaries;
       propReady = true;
+    });
+  }
+
+  @override
+  void deleteAnimalFailed() {}
+
+  @override
+  void deleteAnimalSuccess() {}
+
+  @override
+  void updateFailed() {
+    showSnackBar("Ocorreu um erro ao tentar atualizar. Tente novamente.", scaffoldKey);
+  }
+
+  @override
+  void updateSuccess() {
+    setState(() {
+      updating = false;
+    });
+    showSnackBar("Animal atualizado.", scaffoldKey);
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    Future.delayed(Duration(seconds: 1)).then((_) {
+      Navigator.of(context).pop(true);
     });
   }
 }

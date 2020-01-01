@@ -1,4 +1,3 @@
-
 import 'package:FarmControl/data/api/AnimalApi.dart';
 import 'package:FarmControl/data/api/ProprietaryApi.dart';
 import 'package:FarmControl/data/api/SpecieApi.dart';
@@ -6,6 +5,7 @@ import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:firebase/firestore.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 
 abstract class AnimalContract{
   void onError();
@@ -17,6 +17,10 @@ abstract class AnimalContract{
   void speciesNotFound();
   void returnProprietaries(List<Proprietary> proprietaries);
   void proprietaryNotFound();
+  void deleteAnimalFailed();
+  void deleteAnimalSuccess();
+  void updateSuccess();
+  void updateFailed();
 }
 
 class AnimalPresenter{
@@ -30,9 +34,11 @@ class AnimalPresenter{
 
   getAnimals() async{
     try{
-      var animals = await _api.getAnimals();
-      if(animals.length > 0)
+      List<Animal> animals = await _api.getAnimals();
+      if(animals.length > 0) {
+        ApplicationSingleton.animals = animals;
         view.listAnimals(animals);
+      }
       else
         view.animalsIsEmpty();
     }
@@ -77,6 +83,26 @@ class AnimalPresenter{
     }
     catch(e){
       view.onError();
+    }
+  }
+
+  deleteAnimal(String id) async{
+    try{
+      await _api.removeAnimal(id);
+      view.deleteAnimalSuccess();
+    }
+    catch(e){
+      view.deleteAnimalFailed();
+    }
+  }
+
+  updateAnimal(Animal animal) async{
+    try{
+      await _api.updateAnimal(animal, animal.id);
+      view.updateSuccess();
+    }
+    catch(e){
+      view.updateFailed();
     }
   }
 

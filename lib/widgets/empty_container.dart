@@ -1,11 +1,11 @@
-import 'package:FarmControl/utils/MyMediaQuery.dart';
+
 import 'package:flutter_web/material.dart';
 
 Widget emptyContainer(String text){
   return Container(
       color: Colors.white,
-      width: MyMediaQuery.size.width,
-      height: MyMediaQuery.size.height,
+      width: double.infinity,
+      height: double.infinity,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

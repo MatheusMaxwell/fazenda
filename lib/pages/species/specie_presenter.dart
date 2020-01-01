@@ -1,6 +1,8 @@
 
 import 'package:FarmControl/data/api/SpecieApi.dart';
 import 'package:FarmControl/model/species.dart';
+import 'package:FarmControl/model/animal.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:firebase/firestore.dart';
 
 abstract class SpecieContract{
@@ -11,6 +13,9 @@ abstract class SpecieContract{
   void insertFailed();
   void removeSuccess();
   void removeFailed();
+  void specieInUse();
+  void updateFailed();
+  void updateSuccess();
 }
 
 class SpeciePresenter{
@@ -44,13 +49,33 @@ class SpeciePresenter{
     }
   }
 
-  deleteSpecie(String id)async{
+  deleteSpecie(Specie specie)async{
+    bool inUse = false;
+    for(Animal animal in ApplicationSingleton.animals){
+      if(animal.specie.contains(specie.specie)){
+        inUse = true;
+        view.specieInUse();
+      }
+    }
+    if(!inUse){
+      try{
+        await _api.removeSpecie(specie.id);
+        view.removeSuccess();
+      }
+      catch(e){
+        view.removeFailed();
+      }
+    }
+
+  }
+
+  updateSpecie(Specie specie) async {
     try{
-      await _api.removeSpecie(id);
-      view.removeSuccess();
+      await _api.updateSpecie(specie, specie.id);
+      view.updateSuccess();
     }
     catch(e){
-      view.removeFailed();
+      view.updateFailed();
     }
   }
 }

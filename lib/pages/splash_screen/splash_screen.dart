@@ -2,7 +2,6 @@ import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_page.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:FarmControl/utils/MyMediaQuery.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter_web/material.dart';
 import 'package:flutter_web/services.dart';
@@ -25,8 +24,6 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    MyMediaQuery.mediaQuery = MediaQuery.of(context);
-    MyMediaQuery.size = MyMediaQuery.mediaQuery.size;
     return Container(
       width: double.infinity,
       height: double.infinity,

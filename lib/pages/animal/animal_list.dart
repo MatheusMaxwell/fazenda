@@ -2,8 +2,7 @@ import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/pages/animal/animal_presenter.dart';
-import 'package:FarmControl/pages/animal/animal_register.dart';
-import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
@@ -11,6 +10,7 @@ import 'package:FarmControl/widgets/cards.dart';
 import 'package:FarmControl/widgets/empty_container.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter_web/material.dart';
+
 
 class AnimalList extends StatefulWidget {
   @override
@@ -24,6 +24,8 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   AnimalPresenter presenter;
   List<String> animalsString = new List<String>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  var _tapPosition;
 
   _AnimalListState(){
     presenter = AnimalPresenter(this);
@@ -42,10 +44,11 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         title: Text("Animais"),
         centerTitle: true,
       ),
-      body: _body(),
+      body: _body(context),
       key: scaffoldKey,
       drawer: myDrawer(context),
-      floatingActionButton: FloatingActionButton(onPressed: () => _onPressed(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _onPressed(context),
         child: Icon(
             Icons.add
         ),
@@ -54,32 +57,86 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   }
 
   _onPressed(BuildContext context){
+    ApplicationSingleton.animal = null;
     Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE).then((val)=>val?presenter.getAnimals():null);
   }
 
-  _body(){
-    if(listIsEmpty == null){
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+  _body(BuildContext context){
+    if(ApplicationSingleton.currentUser == null) {
+      redirectLogin(context);
     }
-    else if(listIsEmpty){
-      return emptyContainer("Nenhum animal encontrado");
-    }
-    else{
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-        child: ListView.builder(
-          itemCount: animals.length,
-          itemBuilder: (BuildContext context, int index){
-            return GestureDetector(
-              child: cardTitleSubtitle(animals[index].name, animals[index].specie),
-            );
-          },
-        ),
-      );
+    else {
+      if (listIsEmpty == null) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      else if (listIsEmpty) {
+        return emptyContainer("Nenhum animal encontrado");
+      }
+      else {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () async{
+              listIsEmpty = null;
+              await presenter.getAnimals();
+            },
+            child: ListView.builder(
+              itemCount: animals.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: cardTitleSubtitle(animals[index].name, animals[index].specie),
+                  onTapDown: _storePosition,
+                  onLongPress: () async{
+                    String ret = await _showPopupMenu();
+                    if(ret.contains('delete')) {
+                      bool response = await alertYesOrNo(context, animals[index].name, "Realmente deseja deletar?");
+                      if(response) {
+                        presenter.deleteAnimal(animals[index].id);
+                      }
+                    }
+                    else {
+                      ApplicationSingleton.animal = animals[index];
+                      Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE).then((val)=>val?presenter.getAnimals():null);
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      }
     }
   }
+
+  Future<String> _showPopupMenu() async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    return await showMenu(
+      context: context,
+      position: RelativeRect.fromRect(
+          _tapPosition & Size(40, 40), // smaller rect, the touch area
+          Offset.zero & overlay.size // Bigger rect, the entire screen
+      ),
+      items: [
+        PopupMenuItem(
+          child: Text("Editar"),
+          value: 'edit',
+        ),
+        PopupMenuItem(
+          child: Text("Deletar"),
+          value: 'delete',
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
+  void _storePosition(TapDownDetails details) {
+    _tapPosition = details.globalPosition;
+  }
+
 
 
   @override
@@ -100,15 +157,14 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   @override
   void insertFailed() {
-    // TODO: implement insertFailed
+    showSnackBar("Não foi possível inserir o animal. Tente novamente.", scaffoldKey);
   }
-
   @override
   void insertSuccess() {
-    // TODO: implement insertSuccess
+    showSnackBar("Animal inserido", scaffoldKey);
+    listIsEmpty = null;
+    presenter.getAnimals();
   }
-
-
 
   @override
   void onError() {
@@ -116,23 +172,30 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   }
 
   @override
-  void returnSpecies(List<Specie> species) {
-    // TODO: implement returnSpecie
+  void deleteAnimalFailed() {
+    showSnackBar("Não foi possível deletar o animal. Tente novamente.", scaffoldKey);
   }
 
   @override
-  void speciesNotFound() {
-    // TODO: implement specieNotFound
+  void deleteAnimalSuccess() {
+    showSnackBar("Animal deletado.", scaffoldKey);
+    listIsEmpty = null;
+    presenter.getAnimals();
   }
 
   @override
-  void proprietaryNotFound() {
-    // TODO: implement proprietaryNotFound
-  }
-
+  void returnSpecies(List<Specie> species) {}
   @override
-  void returnProprietaries(List<Proprietary> proprietaries) {
-    // TODO: implement returnProprietaries
-  }
+  void speciesNotFound() {}
+  @override
+  void proprietaryNotFound() {}
+  @override
+  void returnProprietaries(List<Proprietary> proprietaries) {}
+  @override
+  void updateFailed() {}
+  @override
+  void updateSuccess() {}
+
+
 }
 

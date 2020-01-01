@@ -1,17 +1,17 @@
 
-import 'package:firebase/firebase.dart';
+import 'package:firebase/firebase.dart' as fb;
 import 'package:meta/meta.dart';
 
 @immutable
 class UserRepository {
-  UserRepository({Auth firebaseAuth, GoogleAuthProvider googleSignin})
+  /*UserRepository({Auth firebaseAuth, GoogleAuthProvider googleSignin})
       : _firebaseAuth = firebaseAuth ?? auth(),
-        _googleSignIn = googleSignin ?? GoogleAuthProvider();
+        _googleSignIn = googleSignin ?? GoogleAuthProvider();*/
 
-  final Auth _firebaseAuth;
-  final GoogleAuthProvider _googleSignIn;
+  final fb.Auth _firebaseAuth = fb.auth();
+  final fb.GoogleAuthProvider _googleSignIn = fb.GoogleAuthProvider();
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<fb.UserCredential> signInWithGoogle() async {
     try {
       return await _firebaseAuth.signInWithPopup(_googleSignIn);
     } catch (e) {
@@ -20,7 +20,7 @@ class UserRepository {
     }
   }
 
-  Future<UserCredential> signInWithCredentials(
+  Future<fb.UserCredential> signInWithCredentials(
       String email, String password) async {
     try {
       return await _firebaseAuth.signInWithEmailAndPassword(email, password);
@@ -31,7 +31,7 @@ class UserRepository {
     }
   }
 
-  Future<UserCredential> signUp({String email, String password}) async {
+  Future<fb.UserCredential> signUp({String email, String password}) async {
     try {
       return await _firebaseAuth.createUserWithEmailAndPassword(
         email,
