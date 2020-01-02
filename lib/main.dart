@@ -11,7 +11,11 @@ import 'package:FarmControl/utils/Constants.dart';
 import 'package:flutter_web/material.dart';
 
 
-void main() => runApp(MyApp());
+void main() {
+  //WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MyApp());
+}
 
 final routes = {
   //Constants.SPLASH_SCREEN: (BuildContext context) => new Splash(),

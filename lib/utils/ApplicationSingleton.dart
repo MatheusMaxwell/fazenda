@@ -18,4 +18,5 @@ class ApplicationSingleton {
   static Animal animal;
   static Proprietary proprietary;
   static Specie specie;
+  static String reportsTitle;
 }

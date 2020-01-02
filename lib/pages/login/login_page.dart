@@ -51,6 +51,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+    _loginController.text = "farmcontrol@gmail.com";
+    _passwordController.text = "farm.admin";
     return new Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.blue,

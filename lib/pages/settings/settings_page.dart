@@ -37,15 +37,15 @@ class _SettingsPageState extends State<SettingsPage> {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
-            _listTItle("Proprietários", context, ProprietaryList()),
-            _listTItle("Espécies", context, SpecieList()),
+            listTitle("Proprietários", context, ProprietaryList()),
+            listTitle("Espécies", context, SpecieList()),
           ],
         ),
       );
     }
   }
 
-  _listTItle(String title, BuildContext context, Widget page){
+  listTitle(String title, BuildContext context, Widget page){
     return ListTile(
       leading: Icon(Icons.list),
       title: Text(title),
