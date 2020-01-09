@@ -17,6 +17,14 @@ class AnimalApi extends ChangeNotifier {
     return animals;
   }
 
+  Future<List<Animal>> getAnimalsByProprietary(String proprietary)async{
+    var result = await _api.getDataCollection();
+    animals = result.docs
+        .map((doc) => Animal.fromMap(doc.data(), doc.id))
+        .toList();
+    return animals;
+  }
+
   Stream<QuerySnapshot> getCategoriesAsStream() {
     return _api.streamDataCollection();
   }

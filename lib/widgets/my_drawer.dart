@@ -1,10 +1,9 @@
-import 'package:FarmControl/pages/animal/animal_list.dart';
-import 'package:FarmControl/pages/login/login_page.dart';
-import 'package:FarmControl/pages/settings/settings_page.dart';
+
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:flutter_web/material.dart';
 import 'package:FarmControl/utils/nav.dart';
+
 
 Widget myDrawer(BuildContext context) {
   return Drawer(

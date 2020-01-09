@@ -1,5 +1,11 @@
+import 'package:FarmControl/data/api/AnimalApi.dart';
+import 'package:FarmControl/data/api/ProprietaryApi.dart';
+import 'package:FarmControl/model/animal.dart';
+import 'package:FarmControl/model/proprietary.dart';
 import 'package:flutter_web/material.dart';
 import 'package:flutter_web/rendering.dart';
+import 'package:intl/intl.dart';
+
 import '../../utils/ApplicationSingleton.dart';
 import '../../widgets/my_drawer.dart';
 
@@ -8,15 +14,19 @@ class ReportsList extends StatefulWidget {
   _ReportsListState createState() => _ReportsListState();
 }
 
-
 class _ReportsListState extends State<ReportsList> {
 
-  String propValue;
+
+  String propValue = "Todos";
   List<DropdownMenuItem<String>> _dropDownProprietaries;
+  var _apiAnimal = AnimalApi();
+  var _apiProp = ProprietaryApi();
+  List<Animal> animals = List<Animal>();
+  List<Proprietary> proprietaries = List<Proprietary>();
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext context){
+    getAnimals(propValue);
     return Scaffold(
       appBar: AppBar(
         title: Text(ApplicationSingleton.reportsTitle),
@@ -37,11 +47,44 @@ class _ReportsListState extends State<ReportsList> {
     );
   }
 
+  getAnimals(String propValue)async{
+    var anims = await _apiAnimal.getAnimals();
+    List<Animal> ret = List<Animal>();
+    if(!propValue.contains("Todos")){
+      for(var a in anims){
+        if(a.agroProprietary.contains(propValue)){
+          ret.add(a);
+        }
+      }
+    }
+    else{
+      ret = anims;
+    }
+    for(var a in ret){
+      if(a.lossDate.isNotEmpty || a.saleDate.isNotEmpty){
+        ret.remove(a);
+      }
+    }
+    setState((){
+      animals = ret;
+    });
+
+  }
+
+  getProprietaries()async{
+    var props = await _apiProp.getProprietaries();
+    setState((){
+      proprietaries = props;
+    });
+  }
+
   _body(){
+    getProprietaries();
     List<String> proprietariesString = new List<String>();
     proprietariesString.add('Todos');
-    proprietariesString.add('Antenor');
-
+    for(var p in proprietaries){
+      proprietariesString.add(p.name);
+    }
     _dropDownProprietaries = getDropDownMenuItems(proprietariesString);
     return Column(
         children: <Widget>[
@@ -62,34 +105,82 @@ class _ReportsListState extends State<ReportsList> {
               ],
             ),
           ),
-          _list(),
+          ApplicationSingleton.reportsTitle.contains("Bovinos") ? _listBov() : _listEquine(),
         ],
     );
   }
 
-  _list(){
+  _listEquine(){
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.all(20.0),
+        shrinkWrap: false,
+        children: <Widget>[
+          cardReport("0 - 6 M", getQtdAnimals(true, -1, 6, "Equino"), getQtdAnimals(false, -1, 6, "Equino")),
+          SizedBox(
+            height: 20,
+          ),
+          cardReport("> 6 M", getQtdAnimals(true, 6, 1000, "Equino"), getQtdAnimals(false, 6, 1000, "Equino")),
+          SizedBox(
+            height: 20,
+          ),
+          cardReport("Total", getQtdAnimals(true, 0, 1000, "Equino"), getQtdAnimals(true, 0, 1000, "Equino")),
+          SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
+  int getQtdAnimals(bool isMale, int min, int max, String specie){
+    int count = 0;
+
+    for(var anim in animals){
+      if(anim.specie.contains(specie)){
+        var month = (DateTime.parse(DateFormat("dd/MM/yyyy").parse(anim.birthDate).toString()).difference(DateTime.now()).inDays)/30;
+        month = month * -1;
+        print("Animal: "+anim.name+"Month: "+month.toString());
+        if( month > min && month <= max){
+          if(isMale){
+            if(anim.sex.contains("Macho")){
+              count = count + 1;
+            }
+          }
+          else{
+            if(anim.sex.contains("Femea")){
+              count = count + 1;
+            }
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+  _listBov(){
     return Expanded(
       child: ListView(
           padding: const EdgeInsets.all(20.0),
           shrinkWrap: false,
           children: <Widget>[
-            cardReport("0 - 12 M", 15, 15),
+            cardReport("0 - 12 M", getQtdAnimals(true, -1, 12, "Bovino"), getQtdAnimals(false, -1, 12, "Bovino")),
             SizedBox(
               height: 20,
             ),
-            cardReport("13 - 24 M", 10, 19),
+            cardReport("13 - 24 M", getQtdAnimals(true, 13, 24, "Bovino"), getQtdAnimals(false, 13, 24, "Bovino")),
             SizedBox(
               height: 20,
             ),
-            cardReport("25 - 36 M", 0, 7),
+            cardReport("25 - 36 M", getQtdAnimals(true, 25, 36, "Bovino"), getQtdAnimals(false, 25, 36, "Bovino")),
             SizedBox(
               height: 20,
             ),
-            cardReport("> 36 M", 0, 36),
+            cardReport("> 36 M", getQtdAnimals(true, 36, 1000, "Bovino"), getQtdAnimals(false, 36, 1000, "Bovino")),
             SizedBox(
               height: 20,
             ),
-            cardReport("Total", 25, 77),
+            cardReport("Total", getQtdAnimals(true, 0, 1000,"Bovino"), getQtdAnimals(false, 0, 1000, "Bovino")),
             SizedBox(
               height: 20,
             ),
@@ -115,16 +206,42 @@ class _ReportsListState extends State<ReportsList> {
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Text("Macho: " + male.toString(), style: TextStyle(fontSize: 28),),
-                Text("Fêmea: " + female.toString(), style: TextStyle(fontSize: 28),)
-              ],
+            child: GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text("Macho: " + male.toString(), style: TextStyle(fontSize: 28),),
+                  Text("Fêmea: " + female.toString(), style: TextStyle(fontSize: 28),)
+                ],
+              ),
+              onTap: ()async {
+                if(title.contains("0 - 12")){
+                  await _showPopupMenu();
+                }
+              },
             ),
           )
         ],
       ),
+    );
+  }
+
+  Future<String> _showPopupMenu() async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    return await showMenu(
+      context: context,
+      position: RelativeRect.fill,
+      items: [
+        PopupMenuItem(
+          child: Text("Editar"),
+          value: 'edit',
+        ),
+        PopupMenuItem(
+          child: Text("Deletar"),
+          value: 'delete',
+        ),
+      ],
+      elevation: 8.0,
     );
   }
 

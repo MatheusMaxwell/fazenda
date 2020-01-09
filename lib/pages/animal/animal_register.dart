@@ -1,4 +1,6 @@
 
+import 'dart:html';
+
 import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
@@ -13,6 +15,9 @@ import 'package:flutter_web/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter_web/services.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase/firebase.dart';
+
+
 
 
 class AnimalRegisterSetting extends StatefulWidget {
@@ -22,8 +27,6 @@ class AnimalRegisterSetting extends StatefulWidget {
   AnimalRegister createState() => new AnimalRegister();
 
 }
-
-
 
 class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContract{
   var _animal = Animal();
@@ -39,10 +42,14 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   bool specieReady = false;
   bool propReady = false;
   bool checkLossDate = false;
+  bool checkBuyDate = false;
+  bool checkSaleDate = false;
   bool updating = true;
   bool isUpdate = false;
   final nameController = TextEditingController();
   final codeController = TextEditingController();
+  File mFile = null;
+  bool isInitialBuild = true;
 
   AnimalRegister(){
     presenter = AnimalPresenter(this);
@@ -58,9 +65,10 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
 
   @override
   Widget build(BuildContext context) {
-    if(specieReady && propReady){
+    if(specieReady && propReady && isInitialBuild){
       proprietariesToString();
       speciesToString();
+      isInitialBuild = false;
       setState(() {
         updating = false;
       });
@@ -70,9 +78,24 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
       _animal = ApplicationSingleton.animal;
       nameController.text = _animal.name;
       codeController.text = _animal.code;
-      
+      if(_animal.lossDate.isNotEmpty) {
+        checkLossDate = true;
+      }
+      if(_animal.buyDate.isNotEmpty) {
+        checkBuyDate = true;
+      }
+      if(_animal.saleDate.isNotEmpty) {
+        checkSaleDate = true;
+      }
     }
-    return _body(context);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Registro"),
+          centerTitle: true,
+        ),
+        key: scaffoldKey,
+        body: _body(context),
+    );
   }
 
   List<DropdownMenuItem<String>> getDropDownMenuItems(List list) {
@@ -85,8 +108,6 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     }
     return items;
   }
-  
-  
 
   _body(BuildContext context){
     if(ApplicationSingleton.currentUser == null){
@@ -94,66 +115,180 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     }
     else {
       if (updating) {
-        return Container(
-          color: Colors.white,
-          child: Center(
+        return Center(
             child: CircularProgressIndicator(),
-          ),
         );
       }
       else {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Registro"),
-          ),
-          key: scaffoldKey,
-          body: Column(
-            children: <Widget>[
-              _dropDown("Espécie", _animal.specie, _dropDownSpecies,
-                  changedDropDownItem), //arrumar
-              textInput(true, TextInputType.text, "Nome"),
-              _dropDown(
-                  "Sexo", _animal.sex, _dropDownSexItems,
-                  changedDropDownItemSex),
-              SizedBox(
-                height: 15,
-              ),
-              _textDate("Data Nascimento"),
-              _datePicker(true),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Text(
-                      "Data Venda/Perda", style: TextStyle(fontSize: 17),),
+        return ListView(
+          children: <Widget>[
+                _dropDown("Espécie", _animal.specie, _dropDownSpecies,
+                    changedDropDownItem), //arrumar
+                textInput(true, TextInputType.text, "Nome"),
+                _dropDown(
+                    "Sexo", _animal.sex, _dropDownSexItems,
+                    changedDropDownItemSex),
+                SizedBox(
+                  height: 15,
+                ),
+                _textDate("Data Nascimento"),
+                _datePicker(true),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        "Data Perda/Morte", style: TextStyle(fontSize: 17),),
+                    ),
+                    Checkbox(
+                      value: checkLossDate,
+                      onChanged: (bool value) {
+                        setState(() {
+                          if(!value){
+                            _animal.lossDate = "";
+                          }
+                          checkLossDate = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                // ignore: sdk_version_ui_as_code
+                if(checkLossDate) _datePicker(false),
+                _dropDown(
+                    "Proprietário", _animal.proprietary, _dropDownProprietaries,
+                    changedDropDownProprietary),
+                _dropDown("Proprietário Agro", _animal.agroProprietary,
+                    _dropDownProprietaries, changedDropDownProprietaryAgro),
+                textInput(false, TextInputType.number, "Código brinco"),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        "Data Compra", style: TextStyle(fontSize: 17),),
+                    ),
+                    Checkbox(
+                      value: checkBuyDate,
+                      onChanged: (bool value) {
+                        setState(() {
+                          if(!value) {
+                            _animal.buyDate = "";
+                          }
+                          checkBuyDate = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                // ignore: sdk_version_ui_as_code
+                if(checkBuyDate) _datePickerOther(true),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        "Data Venda", style: TextStyle(fontSize: 17),),
+                    ),
+                    Checkbox(
+                      value: checkSaleDate,
+                      onChanged: (bool value) {
+                        setState(() {
+                          if(!value){
+                            _animal.saleDate = "";
+                          }
+                          checkSaleDate = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                // ignore: sdk_version_ui_as_code
+                if(checkSaleDate) _datePickerOther(false),
+                _fileRow(_animal.fileName),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)
+                    ),
+                    color: Colors.grey,
+                    child: Text('Upload Genealogia PDF', style: TextStyle(color: Colors.white),),
+                    onPressed: _startFilePicker,
                   ),
-                  Checkbox(
-                    value: checkLossDate,
-                    onChanged: (bool value) {
-                      setState(() {
-                        checkLossDate = value;
-                      });
-                    },
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0)
+                        ),
+                        child: Text(
+                          'Salvar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.blue,
+                        onPressed: (){
+                          setState(() {
+                            updating = true;
+                          });
+                          onPressedButton();
+                        },
+                      )
+
+                    ],
                   ),
-                ],
-              ),
-              // ignore: sdk_version_ui_as_code
-              if(checkLossDate) _datePicker(false),
-              _dropDown(
-                  "Proprietário", _animal.proprietary, _dropDownProprietaries,
-                  changedDropDownProprietary),
-              _dropDown("Proprietário Agro", _animal.agroProprietary,
-                  _dropDownProprietaries, changedDropDownProprietaryAgro),
-              textInput(false, TextInputType.number, "Código brinco"),
-              BlueButton("Salvar", onPressed: onPressedButton,)
-            ],
-          ),
-        );
+                )
+              ],
+          );
+        //);
       }
     }
+  }
+
+  _fileRow(String fileName){
+    if(fileName != null && fileName.isNotEmpty){
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          children: <Widget>[
+            Text('Arquivo: '+fileName, style: TextStyle(fontSize: 22),),
+            SizedBox(width: 10,),
+            GestureDetector(
+              child: Icon(Icons.close, color: Colors.blue,),
+              onTap: ()async{
+                bool ret = await alertYesOrNo(context, 'Arquivo', 'Deseja realmente remover o arquivo?');
+                if(ret){
+                  setState(() {
+                    updating = true;
+                  });
+                  deleteFile(fileName);
+                  setState(() {
+                    updating = false;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    else{
+      return SizedBox();
+    }
+
   }
   
   textInput(bool isName, TextInputType type, String hint){
@@ -183,17 +318,25 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     );
   }
 
-  onPressedButton(){
-    setState(() {
-      updating = true;
-    });
+  onPressedButton()async{
+    if(mFile != null){
+      await _uploadFile(mFile);
+    }
     if(isUpdate){
       presenter.updateAnimal(_animal);
     }
     else{
       presenter.addAnimal(_animal);
     }
+  }
 
+  deleteFile(String fileName){
+    if(_animal.urlFile != null && _animal.urlFile.isNotEmpty){
+      storage().refFromURL('gs://farmcontrol-2069e.appspot.com').child('files/'+fileName).delete();
+    }
+    _animal.fileName = '';
+    _animal.urlFile = '';
+    mFile = null;
   }
 
   _textDate(String text){
@@ -225,13 +368,50 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
     );
   }
 
+  _startFilePicker() async {
+    if(_animal.urlFile != null && _animal.urlFile.isNotEmpty){
+      alertOk(context, 'Alerta', 'Remova o arquivo já existente antes de adicionar um novo.');
+    }
+    else{
+      InputElement uploadInput = FileUploadInputElement();
+      uploadInput.click();
+
+      uploadInput.onChange.listen((e) {
+        // read file content as dataURL
+        final files = uploadInput.files;
+        if (files.length == 1) {
+          final file = files[0];
+          final reader = new FileReader();
+
+          reader.onLoadEnd.listen((e) async{
+            mFile = file;
+            setState(() {
+              _animal.fileName = DateTime.now().toString();
+            });
+            alertOk(context, 'Alerta', 'Arquivo inserido!');
+          });
+          reader.readAsDataUrl(file);
+        }
+      });
+    }
+  }
+
+  _uploadFile(File file) async {
+    StorageReference storageRef = storage().refFromURL('gs://farmcontrol-2069e.appspot.com').child('files/'+_animal.fileName);
+    UploadTask uploadTask = storageRef.put(file);
+    var uploadedFileURL = await(await uploadTask.future).ref.getDownloadURL();
+    _animal.urlFile = uploadedFileURL.toString();
+  }
+
+
+
   _datePicker(bool isDateBirth){
       if(isUpdate){
         if(isDateBirth){
           date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.birthDate).toString());
         }
         else{
-          if(_animal.lossDate != null){
+          if(_animal.lossDate.isNotEmpty){
             date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.lossDate).toString());
           }
           else{
@@ -265,6 +445,54 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
           }
         },
       );
+
+  }
+
+  _datePickerOther(bool isDateBuy){
+    if(isUpdate){
+      if(isDateBuy){
+        if(_animal.buyDate.isNotEmpty){
+          date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.buyDate).toString());
+        }
+        else{
+          date = DateTime.now();
+        }
+      }
+      else{
+        if(_animal.saleDate.isNotEmpty){
+          date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.saleDate).toString());
+        }
+        else{
+          date = DateTime.now();
+        }
+      }
+    }
+    return FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(formatDate(date, [dd, '/', mm, '/', yyyy])),
+          Icon(Icons.calendar_today)
+        ],
+      ),
+      onPressed: () async {
+        final dtPicker = await showDatePicker(
+            context: context,
+            initialDate: date,
+            firstDate: DateTime(1900),
+            lastDate: DateTime(DateTime.now().year+1));
+        if(dtPicker != null && dtPicker != date){
+          setState(() {
+            if(isDateBuy){
+              _animal.buyDate = formatDate(dtPicker, [dd, '/', mm, '/', yyyy]);
+            }
+            else{
+              _animal.saleDate = formatDate(dtPicker, [dd, '/', mm, '/', yyyy]);
+            }
+            date = dtPicker;
+          });
+        }
+      },
+    );
 
   }
 

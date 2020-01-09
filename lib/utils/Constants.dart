@@ -7,6 +7,7 @@ class Constants {
   static const REPORTS_PAGE = '/reports';
   static const SETTINGS_PAGE = '/settings';
   static const PROPRIETARY_LIST = '/proprietarylist';
+  static const ANIMAL_DETAIL_PAGE = '/animaldetail';
 
   static const PREFERENCES_BIOMETRICS = 'prefs_biometrics';
 }

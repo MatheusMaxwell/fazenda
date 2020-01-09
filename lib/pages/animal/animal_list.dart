@@ -10,6 +10,7 @@ import 'package:FarmControl/widgets/cards.dart';
 import 'package:FarmControl/widgets/empty_container.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter_web/material.dart';
+import 'package:firebase/firebase.dart';
 
 
 class AnimalList extends StatefulWidget {
@@ -26,6 +27,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   var _tapPosition;
+  String fileName = null;
 
   _AnimalListState(){
     presenter = AnimalPresenter(this);
@@ -89,11 +91,16 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 return GestureDetector(
                   child: cardTitleSubtitle(animals[index].name, animals[index].specie),
                   onTapDown: _storePosition,
+                  onTap: (){
+                    ApplicationSingleton.animal = animals[index];
+                    Navigator.of(context).pushNamed(Constants.ANIMAL_DETAIL_PAGE);
+                  },
                   onLongPress: () async{
                     String ret = await _showPopupMenu();
                     if(ret.contains('delete')) {
                       bool response = await alertYesOrNo(context, animals[index].name, "Realmente deseja deletar?");
                       if(response) {
+                        fileName = animals[index].fileName;
                         presenter.deleteAnimal(animals[index].id);
                       }
                     }
@@ -109,6 +116,10 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         );
       }
     }
+  }
+
+  deleteFile(String fileName){
+    storage().refFromURL('gs://farmcontrol-2069e.appspot.com').child('files/'+fileName).delete();
   }
 
   Future<String> _showPopupMenu() async {
@@ -178,6 +189,9 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   @override
   void deleteAnimalSuccess() {
+    if(fileName != null && fileName.isNotEmpty){
+      deleteFile(fileName);
+    }
     showSnackBar("Animal deletado.", scaffoldKey);
     listIsEmpty = null;
     presenter.getAnimals();

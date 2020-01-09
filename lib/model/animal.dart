@@ -11,6 +11,10 @@ class Animal {
   String lossDate;
   String agroProprietary;
   String code;
+  String urlFile;
+  String fileName;
+  String buyDate;
+  String saleDate;
 
   Animal({this.id, this.name, this.sex, this.birthDate, this.lossDate, this.agroProprietary });
 
@@ -23,7 +27,11 @@ class Animal {
       proprietary = map['proprietary'] ?? '',
       lossDate = map['lossDate'] ?? '',
       agroProprietary = map['agroProprietary'] ?? '',
-      code = map['code'] ?? '';
+      code = map['code'] ?? '',
+      urlFile = map['urlFile'] ?? '',
+      fileName = map['fileName'] ?? '',
+      buyDate = map['buyDate'] ?? '',
+      saleDate = map['saleDate'] ?? '';
 
   toJson(){
     return{
@@ -34,7 +42,11 @@ class Animal {
       "proprietary": proprietary,
       "lossDate": lossDate,
       "agroProprietary": agroProprietary,
-      "code": code
+      "code": code,
+      "urlFile": urlFile,
+      "fileName": fileName,
+      "buyDate": buyDate,
+      "saleDate": saleDate
     };
   }
 

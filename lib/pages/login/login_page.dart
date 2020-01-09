@@ -8,9 +8,6 @@ import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:flutter_web/material.dart';
 import 'package:flutter_web/services.dart';
-import '../../utils/ApplicationSingleton.dart';
-
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -51,8 +48,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
-    _loginController.text = "farmcontrol@gmail.com";
-    _passwordController.text = "farm.admin";
+    _loginController.text = "farmcontrol2019@gmail.com";
+    _passwordController.text = "HarasAEM2307";
+
     return new Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.blue,
@@ -63,11 +61,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Image.asset("images/logo.png",
-                  width: mediaQuery.size.width*0.3,
-                  height: mediaQuery.size.height*0.3,
+              Container(
+                width: mediaQuery.size.width <= 1000 ? mediaQuery.size.width*0.5 : mediaQuery.size.width*0.4,
+                height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.3 : mediaQuery.size.height*0.4,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: ExactAssetImage('images/logo.png'),
+                  ),
                 ),
               ),
               Expanded(
@@ -81,11 +81,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: mediaQuery.size.height*0.2,
+                    height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.1 : mediaQuery.size.height*0.3,
                   ),
                   Container(
-                    width: mediaQuery.size.width*0.5,
-                    height: mediaQuery.size.height*0.4,
+                    width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.8 : mediaQuery.size.width*0.5,
+                    height: mediaQuery.size.height <= 650 ? mediaQuery.size.height*0.6 : mediaQuery.size.height*0.4,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8.0),
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                             children: <Widget>[
                               InkWell(
                                 child: Container(
-                                  width: mediaQuery.size.width*0.475,
+                                  width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.730 : mediaQuery.size.width*0.475,
                                   height: 60,
                                   child: Material(
                                     child: InkWell(

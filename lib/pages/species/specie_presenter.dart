@@ -1,4 +1,5 @@
 
+import 'package:FarmControl/data/api/AnimalApi.dart';
 import 'package:FarmControl/data/api/SpecieApi.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:FarmControl/model/animal.dart';
@@ -22,6 +23,8 @@ class SpeciePresenter{
   SpecieContract view;
   SpeciePresenter(this.view);
   var _api = SpecieApi();
+  var _apiAnimal = AnimalApi();
+  Specie oldSpecie;
 
   getSpecies()async{
     try{
@@ -71,11 +74,23 @@ class SpeciePresenter{
 
   updateSpecie(Specie specie) async {
     try{
+      oldSpecie = await _api.getSpecieById(specie.id);
       await _api.updateSpecie(specie, specie.id);
+      await updateAnimalSpecie(specie);
       view.updateSuccess();
     }
     catch(e){
       view.updateFailed();
+    }
+  }
+
+  updateAnimalSpecie(Specie specie)async{
+    List<Animal> animals = await _apiAnimal.getAnimals();
+    for(var anim in animals){
+      if(anim.specie == oldSpecie.specie){
+        anim.specie = specie.specie;
+        await _apiAnimal.updateAnimal(anim, anim.id);
+      }
     }
   }
 }

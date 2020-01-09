@@ -1,4 +1,5 @@
 
+import 'package:FarmControl/data/api/AnimalApi.dart';
 import 'package:FarmControl/data/api/ProprietaryApi.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:firebase/firestore.dart';
@@ -23,6 +24,8 @@ class ProprietaryPresenter {
   ProprietaryContract view;
   ProprietaryPresenter(this.view);
   var _api = new ProprietaryApi();
+  var _apiAnimal = new AnimalApi();
+  Proprietary oldProp;
 
   getProprietaries()async{
     try{
@@ -71,11 +74,29 @@ class ProprietaryPresenter {
 
   updateProprietary(Proprietary prop) async{
     try{
+      oldProp = await _api.getProprietaryById(prop.id);
       await _api.updateProprietary(prop, prop.id);
+      await verifyPropAnimal(prop);
       view.updateSuccess();
     }
     catch(e){
       view.updateFailed();
+    }
+  }
+
+  verifyPropAnimal(Proprietary prop) async {
+    List<Animal> animals = await _apiAnimal.getAnimals();
+    for(var anim in animals){
+      if(anim.proprietary == (oldProp.name + " | " + oldProp.mark)){
+        Animal a = await _apiAnimal.getAnimalById(anim.id);
+        a.proprietary = prop.name + " | " + prop.mark;
+        await _apiAnimal.updateAnimal(a, a.id);
+      }
+      if(anim.agroProprietary == (oldProp.name + " | " + oldProp.mark)){
+        Animal a = await _apiAnimal.getAnimalById(anim.id);
+        a.agroProprietary = prop.name + " | " + prop.mark;
+        await _apiAnimal.updateAnimal(a, a.id);
+      }
     }
   }
 }

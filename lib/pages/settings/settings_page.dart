@@ -7,6 +7,7 @@ import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
 
+
 class SettingsPage extends StatefulWidget {
 
   @override

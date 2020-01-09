@@ -10,6 +10,7 @@ import 'package:FarmControl/widgets/empty_container.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter_web/material.dart';
 
+
 class SpecieList extends StatefulWidget {
   @override
   _SpeciesListState createState() => _SpeciesListState();
@@ -156,7 +157,7 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
                         setState(() {
                           listIsEmpty = null;
                         });
-                        presenter.addSpecie(newSpecie);
+                        presenter.updateSpecie(newSpecie);
                       }
                     }
                   },

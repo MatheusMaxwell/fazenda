@@ -16,6 +16,9 @@ class BlueButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
           child: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0)
+            ),
             child: Text(
               text,
               style: TextStyle(color: Colors.white),

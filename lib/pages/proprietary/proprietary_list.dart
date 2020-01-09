@@ -12,6 +12,7 @@ import 'package:FarmControl/widgets/my_drawer.dart';
 import 'package:flutter_web/material.dart';
 
 
+
 class ProprietaryList extends StatefulWidget {
   @override
   _ProprietaryListState createState() => _ProprietaryListState();
@@ -28,6 +29,7 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
   bool showButtons = false;
   var _tapPosition;
   bool isUpdate = false;
+  int flagOldProp = 0;
 
   _ProprietaryListState(){
     presenter = ProprietaryPresenter(this);
