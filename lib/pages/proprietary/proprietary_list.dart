@@ -30,6 +30,7 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
   var _tapPosition;
   bool isUpdate = false;
   int flagOldProp = 0;
+  String textSearchProp = "";
 
   _ProprietaryListState(){
     presenter = ProprietaryPresenter(this);
@@ -146,46 +147,77 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
       else {
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () async{
-              listIsEmpty = null;
-              await presenter.getProprietaries();
-            },
-            child: ListView.builder(
-              itemCount: proprietaries.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: cardTitleSubtitle(
-                      proprietaries[index].name, proprietaries[index].mark),
-                  onTapDown: _storePosition,
-                  onLongPress: () async{
-                    String ret = await _showPopupMenu();
-                    if(ret.contains('delete')) {
-                      if (await alertYesOrNo(context, proprietaries[index].name,
-                          "Realmente deseja deletar?")) {
-                        presenter.deleteProprietary(proprietaries[index]);
-                      }
-                    }
-                    else{
-                        ApplicationSingleton.proprietary = proprietaries[index];
-                        isUpdate = true;
-                        newProp = await _showDialog(context);
-                        if(newProp != null){
-                          setState(() {
-                            listIsEmpty = null;
-                          });
-                          presenter.updateProprietary(newProp);
-                        }
-                    }
+          child: Column(
+            children: <Widget>[
+              TextField(
+                  textInputAction: TextInputAction.done,
+                  onChanged: searchProp,
+                  decoration: InputDecoration(
+                    hintText: "Busca",
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16.0,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    prefixIcon: Icon(Icons.search),
+                  )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () async{
+                    listIsEmpty = null;
+                    await presenter.getProprietaries();
                   },
-                );
-              },
-            ),
+                  child: ListView.builder(
+                    itemCount: proprietaries.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: cardTitleSubtitle(
+                            proprietaries[index].name, proprietaries[index].mark),
+                        onTapDown: _storePosition,
+                        onLongPress: () async{
+                          String ret = await _showPopupMenu();
+                          if(ret.contains('delete')) {
+                            if (await alertYesOrNo(context, proprietaries[index].name,
+                                "Realmente deseja deletar?")) {
+                              presenter.deleteProprietary(proprietaries[index]);
+                            }
+                          }
+                          else{
+                              ApplicationSingleton.proprietary = proprietaries[index];
+                              isUpdate = true;
+                              newProp = await _showDialog(context);
+                              if(newProp != null){
+                                setState(() {
+                                  listIsEmpty = null;
+                                });
+                                presenter.updateProprietary(newProp);
+                              }
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       }
     }
+  }
+
+  searchProp(String text){
+    setState(() {
+      textSearchProp = text;
+      presenter.getProprietaries();
+    });
   }
 
 
@@ -217,8 +249,19 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
 
   @override
   void listProprietaries(List<Proprietary> proprietaries) {
+    List<Proprietary> props = List<Proprietary>();
+    if(textSearchProp.isNotEmpty){
+      for(var p in proprietaries){
+        if(p.name.toUpperCase().contains(textSearchProp.toUpperCase())){
+          props.add(p);
+        }
+      }
+    }
+    else{
+      props = proprietaries;
+    }
     setState(() {
-      this.proprietaries = proprietaries;
+      this.proprietaries = props;
       listIsEmpty = false;
     });
   }

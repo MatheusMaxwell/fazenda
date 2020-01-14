@@ -1,5 +1,6 @@
 
 import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
+import 'package:FarmControl/model/Matrix.dart';
 import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
@@ -19,4 +20,5 @@ class ApplicationSingleton {
   static Proprietary proprietary;
   static Specie specie;
   static String reportsTitle;
+  static List<Matrix> matrixDocument;
 }

@@ -1,4 +1,3 @@
-import 'dart:js_util';
 import 'dart:js' as js;
 import 'package:flutter_web/material.dart';
 import 'package:flutter_web/rendering.dart';
@@ -14,12 +13,15 @@ class AnimalDetail extends StatefulWidget {
 class _AnimalDetailState extends State<AnimalDetail> {
   Animal animal;
   bool isEquino = false;
+  MediaQueryData mediaQuery;
   @override
   Widget build(BuildContext context) {
+    mediaQuery = MediaQuery.of(context);
     animal = ApplicationSingleton.animal;
     if(animal.specie.contains('Equino')){
       isEquino = true;
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes'),
@@ -30,11 +32,12 @@ class _AnimalDetailState extends State<AnimalDetail> {
   }
 
   _body(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return ListView(
       children: <Widget>[
-        Text(
-          animal.name, style: TextStyle(fontSize: fontGetValue(36, 40, 30), color: Colors.black),
+        Center(
+          child: Text(
+            animal.name, style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(20.0),
@@ -56,40 +59,38 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   _space(),
                   _animalField('Data Nascimento: ', animal.birthDate),
                   _space(),
-                  _animalField('Data Perda: ', animal.lossDate),
-                  _space(),
                   _animalField('Proprietário: ', animal.proprietary),
                   _space(),
                   _animalField('Proprietário Agro: ', animal.agroProprietary),
-                  _space(),
-                  Row(
-                    children: <Widget>[
-                      _animalField('Data Compra: ', animal.buyDate),
-                      SizedBox(
-                        width: 260,
-                      ),
-                      _animalField('Data Venda: ', animal.saleDate)
-                    ],
-                  )
+                  if(animal.lossDate.isNotEmpty) _space(),
+                  if(animal.lossDate.isNotEmpty) _animalField('Data Perda: ', animal.lossDate),
+                  if(animal.buyDate.isNotEmpty) _space(),
+                  if(animal.buyDate.isNotEmpty) _animalField('Data Compra: ', animal.buyDate),
+                  if(animal.saleDate.isNotEmpty) _space(),
+                  if(animal.saleDate.isNotEmpty) _animalField('Data Venda: ', animal.saleDate)
+
                 ]
               ),
               ),
             ),
           ),
-        isEquino? RaisedButton(
-          color: Colors.blue,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0)
+        isEquino? Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: RaisedButton(
+            color: Colors.blue,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)
+            ),
+            onPressed: (){
+              if(animal.urlFile.isEmpty){
+                alertOk(context, 'Alerta', 'Este animal não possui um arquivo associado a ele.');
+              }
+              else{
+                js.context.callMethod("open", [animal.urlFile]);
+              }
+            },
+            child: Text('Genealogia', style: TextStyle(color: Colors.white, fontSize: fontGetValue(mediaQuery.size.width/30)),),
           ),
-          onPressed: (){
-            if(animal.urlFile.isEmpty){
-              alertOk(context, 'Alerta', 'Este animal não possui um arquivo associado a ele.');
-            }
-            else{
-              js.context.callMethod("open", [animal.urlFile]);
-            }
-          },
-          child: Text('Genealogia', style: TextStyle(color: Colors.white, fontSize: fontGetValue(24, 26, 22)),),
         ) : _space()
       ],
     );
@@ -104,8 +105,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
     }
     return Row(
       children: <Widget>[
-        Text(modField, style: TextStyle(fontSize: fontGetValue(26, 28, 22))),
-        Text(value, style: TextStyle(fontSize: fontGetValue(26, 28, 22), fontWeight: FontWeight.bold))
+        Text(modField, style: TextStyle(fontSize: fontGetValue(mediaQuery.size.width/30), fontWeight: FontWeight.bold)),
+        Text(value, style: TextStyle(fontSize: fontGetValue(mediaQuery.size.width/30)))
       ],
     );
   }
@@ -116,14 +117,12 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  fontGetValue(double value, double max, double min){
-    if(value < max && value > min){
-      return value;
-    } else if(value < min){
-      return min;
-    } else {
-      return max;
+  fontGetValue(double value){
+    if(value > 26){
+      return 26;
     }
+
+    return value;
   }
 
 }

@@ -156,7 +156,6 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                     ),
                   ],
                 ),
-                // ignore: sdk_version_ui_as_code
                 if(checkLossDate) _datePicker(false),
                 _dropDown(
                     "Proprietário", _animal.proprietary, _dropDownProprietaries,

@@ -1,3 +1,5 @@
+import 'package:FarmControl/data/api/ProprietaryApi.dart';
+import 'package:FarmControl/data/api/SpecieApi.dart';
 import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:FarmControl/model/species.dart';
@@ -28,6 +30,12 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   var _tapPosition;
   String fileName = null;
+  var _apiSpecie = SpecieApi();
+  List<Specie> speciesDrop = List<Specie>();
+  List<DropdownMenuItem<String>> _dropDownProprietaries;
+  String specieValue = "Todas";
+  String searchField = "";
+  int totalAnimal = 0;
 
   _AnimalListState(){
     presenter = AnimalPresenter(this);
@@ -77,6 +85,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         return emptyContainer("Nenhum animal encontrado");
       }
       else {
+        _initProprietaries();
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: RefreshIndicator(
@@ -85,37 +94,116 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
               listIsEmpty = null;
               await presenter.getAnimals();
             },
-            child: ListView.builder(
-              itemCount: animals.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: cardTitleSubtitle(animals[index].name, animals[index].specie),
-                  onTapDown: _storePosition,
-                  onTap: (){
-                    ApplicationSingleton.animal = animals[index];
-                    Navigator.of(context).pushNamed(Constants.ANIMAL_DETAIL_PAGE);
-                  },
-                  onLongPress: () async{
-                    String ret = await _showPopupMenu();
-                    if(ret.contains('delete')) {
-                      bool response = await alertYesOrNo(context, animals[index].name, "Realmente deseja deletar?");
-                      if(response) {
-                        fileName = animals[index].fileName;
-                        presenter.deleteAnimal(animals[index].id);
-                      }
-                    }
-                    else {
-                      ApplicationSingleton.animal = animals[index];
-                      Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE).then((val)=>val?presenter.getAnimals():null);
-                    }
-                  },
-                );
-              },
+            child: Column(
+              children: <Widget>[
+                _header(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: animals.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: cardTitleSubtitle(animals[index].name, animals[index].specie),
+                        onTapDown: _storePosition,
+                        onTap: (){
+                          ApplicationSingleton.animal = animals[index];
+                          Navigator.of(context).pushNamed(Constants.ANIMAL_DETAIL_PAGE);
+                        },
+                        onLongPress: () async{
+                          String ret = await _showPopupMenu();
+                          if(ret.contains('delete')) {
+                            bool response = await alertYesOrNo(context, animals[index].name, "Realmente deseja deletar?");
+                            if(response) {
+                              fileName = animals[index].fileName;
+                              presenter.deleteAnimal(animals[index].id);
+                            }
+                          }
+                          else {
+                            ApplicationSingleton.animal = animals[index];
+                            Navigator.of(context).pushNamed(Constants.ANIMAL_REGISTER_PAGE).then((val)=>val?presenter.getAnimals():null);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Text("Total: $totalAnimal", style: TextStyle(fontSize: 22),)
+              ],
             ),
           ),
         );
       }
     }
+  }
+
+  _header(){
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Column(
+        children: <Widget>[
+            TextField(
+              textInputAction: TextInputAction.done,
+              onChanged: searchAnimal,
+              decoration: InputDecoration(
+                hintText: "Busca",
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16.0,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                prefixIcon: Icon(Icons.search),
+              )
+            ),
+          Row(
+            children: <Widget>[
+              Text('Espécie', style: TextStyle(fontSize: 22),),
+              SizedBox(
+                width: 20,
+              ),
+              DropdownButton(
+                hint: Text('Todos', style: TextStyle(fontSize: 26),),
+                value: specieValue,
+                items: _dropDownProprietaries,
+                onChanged: changedDropDownSpecie,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  searchAnimal(String text) {
+    setState(() {
+      searchField = text;
+      presenter.getAnimals();
+    });
+  }
+
+  void changedDropDownSpecie(String _selected) {
+    setState(() {
+      specieValue = _selected;
+      presenter.getAnimals();
+    });
+  }
+
+  List<DropdownMenuItem<String>> getDropDownMenuItems(List list) {
+    List<DropdownMenuItem<String>> items = new List();
+    for (String item in list) {
+      items.add(new DropdownMenuItem(
+          value: item,
+          child: new Text(item)
+      ));
+    }
+    return items;
+  }
+
+  getSpecies()async{
+    var specs = await _apiSpecie.getSpecies();
+    setState((){
+      speciesDrop = specs;
+    });
   }
 
   deleteFile(String fileName){
@@ -148,6 +236,15 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     _tapPosition = details.globalPosition;
   }
 
+  _initProprietaries(){
+    getSpecies();
+    List<String> speciesString = new List<String>();
+    speciesString.add('Todas');
+    for(var p in speciesDrop){
+      speciesString.add(p.specie);
+    }
+    _dropDownProprietaries = getDropDownMenuItems(speciesString);
+  }
 
 
   @override
@@ -160,8 +257,27 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   @override
   void listAnimals(List<Animal> animals) {
+    List<Animal> anims = List<Animal>();
+    if(searchField.isNotEmpty){
+      for(var a in animals){
+        if(a.name.toUpperCase().contains(searchField.toUpperCase())){
+          anims.add(a);
+        }
+      }
+    }
+    else if(!specieValue.contains("Todas")){
+      for(var a in animals){
+        if(a.specie.contains(specieValue)){
+          anims.add(a);
+        }
+      }
+    }
+    else{
+      anims = animals;
+    }
     setState(() {
-      this.animals = animals;
+      this.animals = anims;
+      totalAnimal = anims.length;
       listIsEmpty = false;
     });
   }

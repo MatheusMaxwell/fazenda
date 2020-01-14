@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
 import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_presenter.dart';
@@ -51,119 +50,127 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     _loginController.text = "farmcontrol2019@gmail.com";
     _passwordController.text = "HarasAEM2307";
 
-    return new Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.blue,
-      resizeToAvoidBottomPadding: true,
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: mediaQuery.size.width <= 1000 ? mediaQuery.size.width*0.5 : mediaQuery.size.width*0.4,
-                height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.3 : mediaQuery.size.height*0.4,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: ExactAssetImage('images/logo.png'),
+    return GestureDetector(
+      onTap: (){
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: new Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.blue,
+        resizeToAvoidBottomPadding: true,
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: mediaQuery.size.width <= 1000 ? mediaQuery.size.width*0.5 : mediaQuery.size.width*0.4,
+                  height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.3 : mediaQuery.size.height*0.4,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: ExactAssetImage('images/logo.png'),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-            ],
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.only(left: 28.0, right: 28.0, top: 70.0),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.1 : mediaQuery.size.height*0.3,
-                  ),
-                  Container(
-                    width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.8 : mediaQuery.size.width*0.5,
-                    height: mediaQuery.size.height <= 650 ? mediaQuery.size.height*0.6 : mediaQuery.size.height*0.4,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(0.0, 15.0),
-                              blurRadius: 15.0),
-                          BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(0.0, -10.0),
-                              blurRadius: 10.0),
-                        ]),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: 40.0,),
-                          buildTextField("Usuário",_loginController),
-                          SizedBox(height: 20.0,),
-                          buildTextField("Senha",_passwordController),
-                          SizedBox(height: 20.0,),
-                          Row(
-                            children: <Widget>[
-                              InkWell(
-                                child: Container(
-                                  width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.730 : mediaQuery.size.width*0.475,
-                                  height: 60,
-                                  child: Material(
-                                    child: InkWell(
-                                        child: PhysicalModel(
-                                            color: Colors.blue,
-                                            elevation: _calculateElevation(),
-                                            borderRadius: BorderRadius.circular(25.0),
-                                            child: Container(
-                                              key: _globalKey,
-                                              height: 48.0,
-                                              width: _width,
-                                              child: RaisedButton(
-                                                shape: new RoundedRectangleBorder( //Round up
-                                                    borderRadius: new BorderRadius.circular(18)
+                Expanded(
+                  child: Container(),
+                ),
+              ],
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(left: 28.0, right: 28.0, top: 70.0),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.1 : mediaQuery.size.height*0.3,
+                    ),
+                    Container(
+                      width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.8 : mediaQuery.size.width*0.5,
+                      height: mediaQuery.size.height <= 650 ? mediaQuery.size.height*0.6 : mediaQuery.size.height*0.4,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(0.0, 15.0),
+                                blurRadius: 15.0),
+                            BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(0.0, -10.0),
+                                blurRadius: 10.0),
+                          ]),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(height: 40.0,),
+                            buildTextField("Usuário",_loginController),
+                            SizedBox(height: 20.0,),
+                            buildTextField("Senha",_passwordController),
+                            SizedBox(height: 20.0,),
+                            Row(
+                              children: <Widget>[
+                                InkWell(
+                                  child: Container(
+                                    width: mediaQuery.size.width<=600 ? mediaQuery.size.width*0.730 : mediaQuery.size.width*0.475,
+                                    height: 60,
+                                    child: Material(
+                                      child: InkWell(
+                                          child: PhysicalModel(
+                                              color: Colors.blue,
+                                              elevation: _calculateElevation(),
+                                              borderRadius: BorderRadius.circular(25.0),
+                                              child: Container(
+                                                key: _globalKey,
+                                                height: 48.0,
+                                                width: _width,
+                                                child: RaisedButton(
+                                                  shape: new RoundedRectangleBorder( //Round up
+                                                      borderRadius: new BorderRadius.circular(18)
+                                                  ),
+                                                  padding: EdgeInsets.all(0.0),
+                                                  color: _state==3 ? Colors.green : Colors.blue,
+                                                  child: _buildButtonChild(),
+                                                  onPressed: () {
+                                                    if(_loginController.text.isEmpty || _passwordController.text.isEmpty){
+                                                      alertOk(context, "Erro", "Usuário e/ou Senha em branco");
+                                                    }else{
+                                                      setState(() {
+                                                        _isPressed = true;
+                                                        _state = 1;
+                                                        _animateButton();
+                                                        _presenter.login(_loginController.text, _passwordController.text, context);
+                                                      });
+                                                    }
+                                                  },
                                                 ),
-                                                padding: EdgeInsets.all(0.0),
-                                                color: _state==3 ? Colors.green : Colors.blue,
-                                                child: _buildButtonChild(),
-                                                onPressed: () {
-                                                  if(_loginController.text.isEmpty || _passwordController.text.isEmpty){
-                                                    alertOk(context, "Erro", "Usuário e/ou Senha em branco");
-                                                  }else{
-                                                    setState(() {
-                                                      _isPressed = true;
-                                                      _state = 1;
-                                                      _animateButton();
-                                                      _presenter.login(_loginController.text, _passwordController.text, context);
-                                                    });
-                                                  }
-                                                },
-                                              ),
-                                            )
-                                        )
+                                              )
+                                          )
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
-                ],
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

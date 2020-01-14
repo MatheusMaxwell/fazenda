@@ -26,6 +26,7 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   var _tapPosition;
   bool isUpdate = false;
+  String textSearchSpecie = "";
 
   _SpeciesListState(){
     presenter = SpeciePresenter(this);
@@ -130,44 +131,75 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
       else {
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () async{
-              listIsEmpty = null;
-              await presenter.getSpecies();
-            },
-            child: ListView.builder(
-              itemCount: species.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: cardSingleText(species[index].specie),
-                  onTapDown: _storePosition,
-                  onLongPress: () async{
-                    String ret = await _showPopupMenu();
-                    if(ret.contains('delete')) {
-                      if (await alertYesOrNo(context, species[index].specie, "Realmente deseja deletar?")) {
-                        presenter.deleteSpecie(species[index]);
-                      }
-                    }
-                    else {
-                      isUpdate = true;
-                      ApplicationSingleton.specie = species[index];
-                      newSpecie = await _showDialog(context);
-                      if(newSpecie != null){
-                        setState(() {
-                          listIsEmpty = null;
-                        });
-                        presenter.updateSpecie(newSpecie);
-                      }
-                    }
+          child: Column(
+            children: <Widget>[
+              TextField(
+                  textInputAction: TextInputAction.done,
+                  onChanged: searchSpecie,
+                  decoration: InputDecoration(
+                    hintText: "Busca",
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16.0,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    prefixIcon: Icon(Icons.search),
+                  )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () async{
+                    listIsEmpty = null;
+                    await presenter.getSpecies();
                   },
-                );
-              },
-            ),
+                  child: ListView.builder(
+                    itemCount: species.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: cardSingleText(species[index].specie),
+                        onTapDown: _storePosition,
+                        onLongPress: () async{
+                          String ret = await _showPopupMenu();
+                          if(ret.contains('delete')) {
+                            if (await alertYesOrNo(context, species[index].specie, "Realmente deseja deletar?")) {
+                              presenter.deleteSpecie(species[index]);
+                            }
+                          }
+                          else {
+                            isUpdate = true;
+                            ApplicationSingleton.specie = species[index];
+                            newSpecie = await _showDialog(context);
+                            if(newSpecie != null){
+                              setState(() {
+                                listIsEmpty = null;
+                              });
+                              presenter.updateSpecie(newSpecie);
+                            }
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       }
     }
+  }
+
+  searchSpecie(String text){
+    setState(() {
+      textSearchSpecie = text;
+      presenter.getSpecies();
+    });
   }
 
   Future<String> _showPopupMenu() async {
@@ -261,8 +293,19 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
 
   @override
   void returnSpecies(List<Specie> species) {
+    List<Specie> specs = List<Specie>();
+    if(textSearchSpecie.isNotEmpty){
+      for(var s in species){
+        if(s.specie.toUpperCase().contains(textSearchSpecie.toUpperCase())){
+          specs.add(s);
+        }
+      }
+    }
+    else{
+      specs = species;
+    }
     setState(() {
-      this.species = species;
+      this.species = specs;
       listIsEmpty = false;
     });
   }
