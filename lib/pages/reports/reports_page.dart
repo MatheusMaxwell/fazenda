@@ -35,17 +35,17 @@ class _ReportsPageState extends State<ReportsPage> {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
-            listTitle("Bovinos", context, ReportsList()),
-            listTitle("Equinos", context, ReportsList()),
+            listTitle("Bovinos", context, ReportsList(), Icons.list),
+            listTitle("Equinos", context, ReportsList(), Icons.list),
           ],
         ),
       );
     }
   }
 
-  listTitle(String title, BuildContext context, Widget page){
+  listTitle(String title, BuildContext context, Widget page, IconData icon){
     return ListTile(
-      leading: Icon(Icons.list),
+      leading: Icon(icon),
       title: Text(title),
       trailing: Icon(Icons.arrow_right),
       onTap: (){

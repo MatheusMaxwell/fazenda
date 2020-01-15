@@ -1,6 +1,7 @@
 import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
 import 'package:FarmControl/pages/species/species_list.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
+import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:flutter_web/material.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
@@ -16,6 +17,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _valueAuth = false;
+  final _newPassField1Controller = new TextEditingController();
+  final _newPassField2Controller = new TextEditingController();
+  final scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: _body(context),
       drawer: myDrawer(context),
+      key: scaffoldKey,
     );
   }
 
@@ -38,24 +43,92 @@ class _SettingsPageState extends State<SettingsPage> {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
-            listTitle("Proprietários", context, ProprietaryList()),
-            listTitle("Espécies", context, SpecieList()),
+            listTitle("Proprietários", context, ProprietaryList(), Icons.list),
+            listTitle("Espécies", context, SpecieList(), Icons.list),
+            listTitle("Alterar senha", context, null, Icons.lock)
           ],
         ),
       );
     }
   }
 
-  listTitle(String title, BuildContext context, Widget page){
+  listTitle(String title, BuildContext context, Widget page, IconData icon){
     return ListTile(
-      leading: Icon(Icons.list),
+      leading: Icon(icon),
       title: Text(title),
       trailing: Icon(Icons.arrow_right),
-      onTap: (){
-        push(context, page);
+      onTap: ()async{
+        if(page!=null){
+          push(context, page);
+        }
+        else{
+          bool ret = await _dialogChangePassword();
+        }
       },
     );
   }
 
+  Future<bool> _dialogChangePassword(){
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0)
+          ),
+          contentPadding: EdgeInsets.all(10.0),
+          title: Center(child: Text("Alterar Senha")),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _textInput("Nova senha", _newPassField1Controller),
+              SizedBox(
+                height: 10,
+              ),
+              _textInput("Repita a senha", _newPassField2Controller)
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: new Text("Cancelar"),
+              onPressed: (){
+                Navigator.of(context).pop(false);
+              },
+            ),
+            FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                if(_newPassField1Controller.text == _newPassField2Controller.text){
+                  Navigator.of(context).pop(true);
+                }
+                else{
+                  showSnackBar("Informe duas senhas iguais.", scaffoldKey);
+                  _newPassField1Controller.text = "";
+                  _newPassField2Controller.text = "";
+                }
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  _textInput(String hintText,TextEditingController controller){
+    return TextField(
+      textInputAction: TextInputAction.done,
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontSize: 16.0,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+      ),
+    );
+  }
 
 }
