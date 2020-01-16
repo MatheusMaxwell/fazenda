@@ -1,3 +1,4 @@
+import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
 import 'package:FarmControl/pages/proprietary/proprietary_list.dart';
 import 'package:FarmControl/pages/species/species_list.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_web/material.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
+//import 'package:toast/toast.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -62,14 +64,29 @@ class _SettingsPageState extends State<SettingsPage> {
           push(context, page);
         }
         else{
-          bool ret = await _dialogChangePassword();
+          String ret = await _dialogChangePassword();
+          if(ret.isNotEmpty){
+            _changePassword(ret);
+          }
         }
       },
     );
   }
 
-  Future<bool> _dialogChangePassword(){
-    return showDialog<bool>(
+  void _changePassword(String password) async{
+    //Create an instance of the current user.
+    UserRepository user = ApplicationSingleton.baseAuth;
+    //Pass in the password to updatePassword.
+    user.updatePassword(password).then((_){
+      alertOk(context, "Alteração de senha", "Senha alterada com sucesso!");
+    }).catchError((error){
+      alertOk(context, "Alteração de senha", "Não foi possível alterar a senha. Tente novamente. Erro: "+error.toString());
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
+  }
+
+  Future<String> _dialogChangePassword(){
+    return showDialog<String>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -92,17 +109,24 @@ class _SettingsPageState extends State<SettingsPage> {
             FlatButton(
               child: new Text("Cancelar"),
               onPressed: (){
-                Navigator.of(context).pop(false);
+                Navigator.of(context).pop("");
               },
             ),
             FlatButton(
               child: new Text("Ok"),
               onPressed: () {
                 if(_newPassField1Controller.text == _newPassField2Controller.text){
-                  Navigator.of(context).pop(true);
+                  if(_newPassField1Controller.text.length > 5){
+                    Navigator.of(context).pop(_newPassField2Controller.text);
+                  }
+                  else{
+                    alertOk(context, "Tamanho inválido", "A senha deve conter, pelo menos, 6 caracteres.");
+                    _newPassField1Controller.text = "";
+                    _newPassField2Controller.text = "";
+                  }
                 }
                 else{
-                  showSnackBar("Informe duas senhas iguais.", scaffoldKey);
+                  alertOk(context, "Senhas diferentes", "Por favor, informe duas senhas iguais.");
                   _newPassField1Controller.text = "";
                   _newPassField2Controller.text = "";
                 }
@@ -118,6 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return TextField(
       textInputAction: TextInputAction.done,
       controller: controller,
+      obscureText: true,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(

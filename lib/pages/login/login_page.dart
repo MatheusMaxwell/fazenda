@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
   //User Controllers and Password
   final _loginController = new TextEditingController();
   final _passwordController = new TextEditingController();
+  final _recoverEmailController = new TextEditingController();
   //-----------------------------------------------------
 
   bool _isPressed = false, _animatingReveal = false;
@@ -159,7 +160,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                                 ),
                               ],
                             ),
-
+                            SizedBox(
+                              height: 10,
+                            ),
+                            GestureDetector(
+                              onTap: ()async {
+                                String email = await _dialogEmail();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text("Esqueci a senha.", style: TextStyle(color: Colors.blue, fontSize: 18, decoration: TextDecoration.underline,),)
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -180,6 +194,59 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     _controller.stop();
   }
 
+  Future<String> _dialogEmail(){
+    return showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)
+            ),
+            contentPadding: EdgeInsets.all(10.0),
+            title: Center(child: Text("Recuperar senha")),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _textInput("Insira seu email", _recoverEmailController),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancelar"),
+                onPressed: (){
+                  Navigator.of(context).pop("");
+                },
+              ),
+              FlatButton(
+                child: new Text("Ok"),
+                onPressed: () {
+                  if(_recoverEmailController.text.isNotEmpty){
+                    Navigator.of(context).pop(_recoverEmailController.text);
+                  }
+                },
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  _textInput(String hintText,TextEditingController controller){
+    return TextField(
+      textInputAction: TextInputAction.done,
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontSize: 16.0,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+      ),
+    );
+  }
 
   //Function animation button in login
   void _animateButton() {

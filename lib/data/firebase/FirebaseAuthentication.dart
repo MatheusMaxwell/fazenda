@@ -65,4 +65,12 @@ class UserRepository {
   Future<String> getUser() async {
     return (_firebaseAuth.currentUser).uid;
   }
+  
+  Future<dynamic> updatePassword(String pass)async {
+    return await _firebaseAuth.currentUser.updatePassword(pass);
+  }
+
+  Future<dynamic> recoverPass(String email)async {
+    return await _firebaseAuth.currentUser.sendEmailVerification();
+  }
 }
