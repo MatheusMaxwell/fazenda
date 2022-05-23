@@ -74,7 +74,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
               ),
             ),
           ),
-        isEquino? Padding(
+        Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: RaisedButton(
             color: Colors.blue,
@@ -89,9 +89,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                 js.context.callMethod("open", [animal.urlFile]);
               }
             },
-            child: Text('Genealogia', style: TextStyle(color: Colors.white, fontSize: fontGetValue(mediaQuery.size.width/30)),),
+            child: Text('Genealogia/Foto', style: TextStyle(color: Colors.white, fontSize: fontGetValue(mediaQuery.size.width/30)),),
           ),
-        ) : _space()
+        )
       ],
     );
   }

@@ -221,7 +221,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                         borderRadius: BorderRadius.circular(15.0)
                     ),
                     color: Colors.grey,
-                    child: Text('Upload Genealogia PDF', style: TextStyle(color: Colors.white),),
+                    child: Text('Upload Genealogia/Foto.', style: TextStyle(color: Colors.white),),
                     onPressed: _startFilePicker,
                   ),
                 ),
