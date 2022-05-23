@@ -11,9 +11,9 @@ import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/button_blue.dart';
 import 'package:FarmControl/widgets/text_input.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter_web/services.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase/firebase.dart';
 

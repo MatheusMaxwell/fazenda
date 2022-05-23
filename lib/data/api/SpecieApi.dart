@@ -1,7 +1,7 @@
 import 'package:FarmControl/data/firebase/ApiFirebase.dart';
 import 'package:FarmControl/model/species.dart';
 import 'package:firebase/firestore.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 
 class SpecieApi extends ChangeNotifier {
   ApiFirebase _api = new ApiFirebase('specie');

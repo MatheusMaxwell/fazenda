@@ -1,7 +1,7 @@
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 
 
 import '../proprietary/proprietary_list.dart';

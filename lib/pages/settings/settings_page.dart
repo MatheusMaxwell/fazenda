@@ -4,7 +4,7 @@ import 'package:FarmControl/pages/species/species_list.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 import 'package:FarmControl/pages/animal/animal_register.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';

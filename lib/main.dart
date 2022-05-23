@@ -8,7 +8,7 @@ import 'package:FarmControl/pages/reports/reports_page.dart';
 import 'package:FarmControl/pages/settings/settings_page.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Constants.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase/firebase.dart' as fb;
 import 'pages/animal/animal_detail.dart';
 

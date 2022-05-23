@@ -6,9 +6,9 @@ import 'package:FarmControl/model/Matrix.dart';
 import 'package:FarmControl/model/animal.dart';
 import 'package:FarmControl/model/proprietary.dart';
 import 'package:firebase/firebase.dart';
-import 'package:flutter_web/cupertino.dart';
-import 'package:flutter_web/material.dart';
-import 'package:flutter_web/rendering.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pdfLib;
 

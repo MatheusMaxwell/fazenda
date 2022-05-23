@@ -5,8 +5,8 @@ import 'package:FarmControl/pages/login/login_presenter.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
-import 'package:flutter_web/material.dart';
-import 'package:flutter_web/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
       child: new Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.blue,
-        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
