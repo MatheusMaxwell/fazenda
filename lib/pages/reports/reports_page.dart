@@ -20,6 +20,7 @@ class _ReportsPageState extends State<ReportsPage> {
       appBar: AppBar(
         title: Text("Relatórios"),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       drawer: myDrawer(context),
       body: _body(context),

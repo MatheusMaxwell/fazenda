@@ -53,6 +53,7 @@ class _ReportsListState extends State<ReportsList> {
         appBar: AppBar(
           title: Text(ApplicationSingleton.reportsTitle),
           centerTitle: true,
+          backgroundColor: Colors.blueGrey,
           actions: <Widget>[
             PopupMenuButton<int>(
               icon: Icon(Icons.more_vert),
@@ -253,7 +254,7 @@ class _ReportsListState extends State<ReportsList> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              color: Colors.blue,
+              color: Colors.blueGrey,
               child: Center(
                 child: Text(title, style: TextStyle(color: Colors.white, fontSize: 30),),
               ),
@@ -297,7 +298,7 @@ class _ReportsListState extends State<ReportsList> {
                         ),
                       ],
                     ),
-                  color: Colors.blue,
+                  color: Colors.blueGrey,
                   width: double.infinity,
                 ),
                 onTap: () => Navigator.of(context).pop(),
@@ -340,7 +341,7 @@ class _ReportsListState extends State<ReportsList> {
                       ),
                     ],
                   ),
-                  color: Colors.blue,
+                  color: Colors.blueGrey,
                   width: double.infinity,
                 ),
                 onTap: () => Navigator.of(context).pop(),

@@ -29,6 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text("Configurações"),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: _body(context),
       drawer: myDrawer(context),

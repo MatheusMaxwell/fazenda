@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "FarmControl",
       theme: ThemeData(
-        primaryColor: Colors.blue
+        primaryColor: Colors.blueGrey
         ),
       routes: routes,
     );

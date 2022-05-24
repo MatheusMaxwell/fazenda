@@ -44,6 +44,7 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
       appBar: AppBar(
         title: Text("Espécies"),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       key: scaffoldKey,
       body: _body(context),

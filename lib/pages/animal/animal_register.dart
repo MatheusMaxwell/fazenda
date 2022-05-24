@@ -92,6 +92,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
         appBar: AppBar(
           title: Text("Registro"),
           centerTitle: true,
+          backgroundColor: Colors.blueGrey,
         ),
         key: scaffoldKey,
         body: _body(context),
@@ -238,7 +239,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                           'Salvar',
                           style: TextStyle(color: Colors.white),
                         ),
-                        color: Colors.blue,
+                        color: Colors.blueGrey,
                         onPressed: (){
                           setState(() {
                             updating = true;
@@ -266,7 +267,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
             Text('Arquivo: '+fileName, style: TextStyle(fontSize: 22),),
             SizedBox(width: 10,),
             GestureDetector(
-              child: Icon(Icons.close, color: Colors.blue,),
+              child: Icon(Icons.close, color: Colors.blueGrey,),
               onTap: ()async{
                 bool ret = await alertYesOrNo(context, 'Arquivo', 'Deseja realmente remover o arquivo?');
                 if(ret){

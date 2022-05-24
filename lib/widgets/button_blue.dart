@@ -23,7 +23,7 @@ class BlueButton extends StatelessWidget {
               text,
               style: TextStyle(color: Colors.white),
             ),
-            color: Colors.blue,
+            color: Colors.blueGrey,
             onPressed: onPressed,
           ),
         )

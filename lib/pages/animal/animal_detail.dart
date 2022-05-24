@@ -26,6 +26,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
       appBar: AppBar(
         title: Text('Detalhes'),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: _body(),
     );
@@ -77,7 +78,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
           child: RaisedButton(
-            color: Colors.blue,
+            color: Colors.blueGrey,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)
             ),

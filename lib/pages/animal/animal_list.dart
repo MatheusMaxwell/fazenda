@@ -53,12 +53,14 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       appBar: AppBar(
         title: Text("Animais"),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: _body(context),
       key: scaffoldKey,
       drawer: myDrawer(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onPressed(context),
+        backgroundColor: Colors.blueGrey,
         child: Icon(
             Icons.add
         ),

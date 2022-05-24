@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:FarmControl/data/firebase/FirebaseAuthentication.dart';
-import 'package:FarmControl/pages/animal/animal_list.dart';
 import 'package:FarmControl/pages/login/login_presenter.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
@@ -58,7 +56,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
       },
       child: new Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blueGrey,
         resizeToAvoidBottomInset: true,
         body: Stack(
           fit: StackFit.expand,
@@ -69,11 +67,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                 Container(
                   width: mediaQuery.size.width <= 1000 ? mediaQuery.size.width*0.5 : mediaQuery.size.width*0.4,
                   height: mediaQuery.size.height <= 520 ? mediaQuery.size.height*0.3 : mediaQuery.size.height*0.4,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: ExactAssetImage('images/logo.png'),
-                    ),
-                  ),
+                  child: Icon(Icons.house, color: Colors.white, size: 200),
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //       image: ExactAssetImage('images/logo.png'),
+                  //   ),
+                  // ),
                 ),
                 Expanded(
                   child: Container(),
@@ -123,7 +122,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                                     child: Material(
                                       child: InkWell(
                                           child: PhysicalModel(
-                                              color: Colors.blue,
+                                              color: Colors.blueGrey,
                                               elevation: _calculateElevation(),
                                               borderRadius: BorderRadius.circular(25.0),
                                               child: Container(
@@ -135,7 +134,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                                                       borderRadius: new BorderRadius.circular(18)
                                                   ),
                                                   padding: EdgeInsets.all(0.0),
-                                                  color: _state==3 ? Colors.green : Colors.blue,
+                                                  color: _state==3 ? Colors.green : Colors.blueGrey,
                                                   child: _buildButtonChild(),
                                                   onPressed: () {
                                                     if(_loginController.text.isEmpty || _passwordController.text.isEmpty){
@@ -168,7 +167,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text("Esqueci a senha.", style: TextStyle(color: Colors.blue, fontSize: 18, decoration: TextDecoration.underline,),)
+                                  Text("Esqueci a senha.", style: TextStyle(color: Colors.blueGrey, fontSize: 18, decoration: TextDecoration.underline,),)
                                 ],
                               ),
                             )

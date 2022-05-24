@@ -48,10 +48,12 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
       appBar: AppBar(
         title: Text("Proprietários"),
         centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: _body(context),
       key: scaffoldKey,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey,
         onPressed: ()async{
           isUpdate = false;
           newProp = await _showDialog(context);

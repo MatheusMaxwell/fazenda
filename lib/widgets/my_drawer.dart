@@ -58,12 +58,13 @@ Widget _containerHead(BuildContext context){
     child: Container(
         width: double.maxFinite,
         height: 200,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('images/logo.png'),
-                fit: BoxFit.cover
-            )
-        )
+        color: Colors.blueGrey,
+        child: Column(
+          children: [
+            Icon(Icons.house, color: Colors.white, size: 100),
+            Text('FarmControl', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+          ],
+        ),
     ),
   );
 }
