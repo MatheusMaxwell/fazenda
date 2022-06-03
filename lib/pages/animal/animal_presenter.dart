@@ -43,6 +43,7 @@ class AnimalPresenter{
         view.animalsIsEmpty();
     }
     catch(e){
+      print(e);
       view.onError();
     }
   }

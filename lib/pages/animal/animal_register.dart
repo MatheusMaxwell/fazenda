@@ -88,6 +88,9 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
         checkSaleDate = true;
       }
     }
+    else{
+      _animal.birthDate = formatDate(date, [dd, '/', mm, '/', yyyy]);
+    }
     return Scaffold(
         appBar: AppBar(
           title: Text("Registro"),
@@ -319,6 +322,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   }
 
   onPressedButton()async{
+
     if(mFile != null){
       await _uploadFile(mFile);
     }

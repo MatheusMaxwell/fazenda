@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:pdf/widgets.dart' as pdfLib;
 
 
@@ -200,7 +201,9 @@ class _ReportsListState extends State<ReportsList> {
 
     for(var anim in animals){
       if(anim.specie.contains(specie)){
-        var month = (DateTime.parse(DateFormat("dd/MM/yyyy").parse(anim.birthDate).toString()).difference(DateTime.now()).inDays)/30;
+        //var month = (DateTime.parse(DateFormat("dd/MM/yyyy").parse(anim.birthDate).toString()).difference(DateTime.now()).inDays)/30;
+        var today = Jiffy(DateTime.now());
+        var month = Jiffy(anim.birthDate, 'dd/MM/yyyy').diff(today, Units.MONTH);
         month = month * -1;
         print("Animal: "+anim.name+" meses: "+month.toString());
         if( month >= min && month <= max){
@@ -220,6 +223,7 @@ class _ReportsListState extends State<ReportsList> {
     createMatrix(isMale, count);
     return count;
   }
+
 
   createMatrix(bool isMale, int qtd){
     if(isMale) {
