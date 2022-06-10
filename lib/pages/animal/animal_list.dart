@@ -24,18 +24,23 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   bool listIsEmpty = null;
   List<Animal> animals;
   List<Specie> species;
+  List<Proprietary> proprietaries;
   AnimalPresenter presenter;
   List<String> animalsString = new List<String>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   var _tapPosition;
   String fileName = null;
-  var _apiSpecie = SpecieApi();
   List<Specie> speciesDrop = List<Specie>();
-  List<DropdownMenuItem<String>> _dropDownProprietaries;
+  List<DropdownMenuItem<String>> _dropDownSpecies;
   String specieValue = "Todas";
+  String propValue = "Todos";
+  List<Proprietary> propDrop = List<Proprietary>();
+  List<DropdownMenuItem<String>> _dropDownProprietaries;
   String searchField = "";
   int totalAnimal = 0;
+  List<Animal> animalsImmutableTotal;
+
 
   _AnimalListState(){
     presenter = AnimalPresenter(this);
@@ -87,6 +92,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         return emptyContainer("Nenhum animal encontrado");
       }
       else {
+        _initSpecies();
         _initProprietaries();
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
@@ -104,7 +110,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                     itemCount: animals.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
-                        child: cardTitleSubtitle(animals[index].name, animals[index].specie),
+                        child: _animalCard(animals[index]),
                         onTapDown: _storePosition,
                         onTap: (){
                           ApplicationSingleton.animal = animals[index];
@@ -137,6 +143,55 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     }
   }
 
+  Widget _animalCard(Animal animal) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0)
+      ),
+      child: Container(
+        height: 80.0,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              height: 60.0,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Text(animal.name,
+                          style: TextStyle(fontSize: 26, color: Colors.black),),
+                        Text("  "),
+                        Text(animal.specie,
+                          style: TextStyle(fontSize: 22, color: Colors.grey),),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(animal.birthDate,
+                          style: TextStyle(fontSize: 22, color: Colors.grey),),
+                        Text("  "),
+                        Text(animal.agroProprietary,
+                          style: TextStyle(fontSize: 22, color: Colors.grey),),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   _header(){
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -158,6 +213,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
               )
             ),
           Row(
+            mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Text('Espécie', style: TextStyle(fontSize: 22),),
               SizedBox(
@@ -166,9 +222,25 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
               DropdownButton(
                 hint: Text('Todos', style: TextStyle(fontSize: 26),),
                 value: specieValue,
-                items: _dropDownProprietaries,
+                items: _dropDownSpecies,
                 onChanged: changedDropDownSpecie,
               ),
+              Text("  "),
+              Text('Proprietário', style: TextStyle(fontSize: 22),),
+              SizedBox(
+                width: 20,
+              ),
+              DropdownButton(
+                hint: Text('Todos', style: TextStyle(fontSize: 26),),
+                value: propValue,
+                items: _dropDownProprietaries,
+                onChanged: changedDropDownProps,
+              ),
+              Spacer(),
+              IconButton(
+                icon: Icon(Icons.abc_sharp),
+                onPressed: _orderAnimals,
+              )
             ],
           ),
         ],
@@ -176,17 +248,30 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     );
   }
 
+  _orderAnimals(){
+    setState(() {
+      animals.sort((a, b) => a.name.compareTo(b.name));
+    });
+  }
+
   searchAnimal(String text) {
     setState(() {
       searchField = text;
-      presenter.getAnimals();
+      listAnimals(null);
     });
   }
 
   void changedDropDownSpecie(String _selected) {
     setState(() {
       specieValue = _selected;
-      presenter.getAnimals();
+      listAnimals(null);
+    });
+  }
+
+  void changedDropDownProps(String _selected) {
+    setState(() {
+      propValue = _selected;
+      listAnimals(null);
     });
   }
 
@@ -202,9 +287,28 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   }
 
   getSpecies()async{
-    var specs = await _apiSpecie.getSpecies();
+    var specs = List<Specie>();
+    if(speciesDrop == null || speciesDrop.isEmpty){
+      specs = await presenter.getSpecies();
+    }
+    else{
+      specs = speciesDrop;
+    }
     setState((){
       speciesDrop = specs;
+    });
+  }
+
+  getProprietaries()async{
+    var props = List<Proprietary>();
+    if(propDrop == null || propDrop.isEmpty){
+      props = await presenter.getProprietaries();
+    }
+    else{
+      props = propDrop;
+    }
+    setState((){
+      propDrop = props;
     });
   }
 
@@ -238,14 +342,24 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     _tapPosition = details.globalPosition;
   }
 
-  _initProprietaries(){
+  _initSpecies(){
     getSpecies();
     List<String> speciesString = new List<String>();
     speciesString.add('Todas');
     for(var p in speciesDrop){
       speciesString.add(p.specie);
     }
-    _dropDownProprietaries = getDropDownMenuItems(speciesString);
+    _dropDownSpecies = getDropDownMenuItems(speciesString);
+  }
+
+  _initProprietaries(){
+    getProprietaries();
+    List<String> propString = new List<String>();
+    propString.add('Todos');
+    for(var p in propDrop){
+      propString.add(p.name + " | " + p.mark);
+    }
+    _dropDownProprietaries = getDropDownMenuItems(propString);
   }
 
 
@@ -259,24 +373,23 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   @override
   void listAnimals(List<Animal> animals) {
-    List<Animal> anims = List<Animal>();
-    if(searchField.isNotEmpty){
-      for(var a in animals){
-        if(a.name.toUpperCase().contains(searchField.toUpperCase())){
-          anims.add(a);
-        }
-      }
-    }
-    else if(!specieValue.contains("Todas")){
-      for(var a in animals){
-        if(a.specie.contains(specieValue)){
-          anims.add(a);
-        }
-      }
+    if(animals == null){
+      animals = animalsImmutableTotal;
     }
     else{
-      anims = animals;
+      animalsImmutableTotal = animals;
     }
+    List<Animal> anims = animals;
+    if(searchField.isNotEmpty){
+      anims = anims.where((element) => element.name.toUpperCase().contains(searchField.toUpperCase())).toList();
+    }
+    if(!specieValue.contains("Todas")){
+      anims = anims.where((element) => element.specie.contains(specieValue)).toList();
+    }
+    if(!propValue.contains("Todos")){
+      anims = anims.where((element) => element.agroProprietary.contains(propValue)).toList();
+    }
+    print(anims);
     setState(() {
       this.animals = anims;
       totalAnimal = anims.length;

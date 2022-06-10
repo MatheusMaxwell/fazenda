@@ -47,6 +47,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
 
+    _loginController.text = "farmcontrol2019@gmail.com";
+    _passwordController.text = "HarasAEM2307";
+
     return GestureDetector(
       onTap: (){
         FocusScopeNode currentFocus = FocusScope.of(context);

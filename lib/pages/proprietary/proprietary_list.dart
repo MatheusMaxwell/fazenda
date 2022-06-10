@@ -22,6 +22,7 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
 
   bool listIsEmpty = null;
   List<Proprietary> proprietaries;
+  List<Proprietary> proprietariesImmutableTotal;
   Proprietary newProp;
   ProprietaryPresenter presenter;
   final scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -218,7 +219,7 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
   searchProp(String text){
     setState(() {
       textSearchProp = text;
-      presenter.getProprietaries();
+      listProprietaries(null);
     });
   }
 
@@ -251,6 +252,12 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
 
   @override
   void listProprietaries(List<Proprietary> proprietaries) {
+    if(proprietaries == null){
+      proprietaries = proprietariesImmutableTotal;
+    }
+    else{
+      proprietariesImmutableTotal = proprietaries;
+    }
     List<Proprietary> props = List<Proprietary>();
     if(textSearchProp.isNotEmpty){
       for(var p in proprietaries){

@@ -34,6 +34,8 @@ class AnimalPresenter{
 
   getAnimals() async{
     try{
+      // List<Animal> animals = [Animal(id: "01", specie: "Bovino", name: "Teste", sex: "Macho", birthDate: "10/12/1996", lossDate: "", agroProprietary: "Matheus"),
+      //                        Animal(id: "02", specie: "Bovino", name: "Abc", sex: "Femea", birthDate: "10/12/1996", lossDate: "", agroProprietary: "Matheus")];
       List<Animal> animals = await _api.getAnimals();
       if(animals.length > 0) {
         ApplicationSingleton.animals = animals;
@@ -63,11 +65,9 @@ class AnimalPresenter{
 
   getSpecies()async{
     try{
+      //var species = [Specie(id: "0", specie: "Bovino", userId: "YHIIobcpVoNCbMht9Pq2uhoy8V32"), Specie(id: "1", specie: "Equino", userId: "YHIIobcpVoNCbMht9Pq2uhoy8V32")];
       var species = await _apiSpecie.getSpecies();
-      if(species.isNotEmpty)
-        view.returnSpecies(species);
-      else
-        view.speciesNotFound();
+      return species;
     }
     catch(e){
       view.onError();
@@ -77,10 +77,7 @@ class AnimalPresenter{
   getProprietaries()async{
     try{
       var props = await _apiProp.getProprietaries();
-      if(props.isNotEmpty)
-        view.returnProprietaries(props);
-      else
-        view.proprietaryNotFound();
+      return props;
     }
     catch(e){
       view.onError();

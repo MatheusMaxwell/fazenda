@@ -20,6 +20,7 @@ class SpecieList extends StatefulWidget {
 class _SpeciesListState extends State<SpecieList> implements SpecieContract{
   bool listIsEmpty = null;
   List<Specie> species;
+  List<Specie> speciesImmutableTotal;
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   SpeciePresenter presenter;
   Specie newSpecie;
@@ -294,6 +295,12 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
 
   @override
   void returnSpecies(List<Specie> species) {
+    if(species == null){
+      species = speciesImmutableTotal;
+    }
+    else{
+      speciesImmutableTotal = species;
+    }
     List<Specie> specs = List<Specie>();
     if(textSearchSpecie.isNotEmpty){
       for(var s in species){

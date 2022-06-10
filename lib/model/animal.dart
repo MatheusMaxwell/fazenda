@@ -16,7 +16,7 @@ class Animal {
   String buyDate;
   String saleDate;
 
-  Animal({this.id, this.name, this.sex, this.birthDate, this.lossDate, this.agroProprietary });
+  Animal({this.id, this.specie, this.name, this.sex, this.birthDate, this.lossDate, this.agroProprietary });
 
   Animal.fromMap(Map map, String id):
       id = id ?? '',
