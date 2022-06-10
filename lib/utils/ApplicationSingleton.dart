@@ -21,4 +21,6 @@ class ApplicationSingleton {
   static Specie specie;
   static String reportsTitle;
   static List<Matrix> matrixDocument;
+  static List<Specie> species;
+  static List<Proprietary> proprietaries;
 }

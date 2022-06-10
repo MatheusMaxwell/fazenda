@@ -289,7 +289,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   getSpecies()async{
     var specs = List<Specie>();
     if(speciesDrop == null || speciesDrop.isEmpty){
-      specs = await presenter.getSpecies();
+      specs = await presenter.getSpeciesAndReturn();
     }
     else{
       specs = speciesDrop;
@@ -302,7 +302,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   getProprietaries()async{
     var props = List<Proprietary>();
     if(propDrop == null || propDrop.isEmpty){
-      props = await presenter.getProprietaries();
+      props = await presenter.getProprietariesAndReturn();
     }
     else{
       props = propDrop;
