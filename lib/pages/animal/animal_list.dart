@@ -149,42 +149,30 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0)
       ),
-      child: Container(
-        height: 80.0,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              height: 60.0,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 10, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Text(animal.name,
-                          style: TextStyle(fontSize: 26, color: Colors.black),),
-                        Text("  "),
-                        Text(animal.specie,
-                          style: TextStyle(fontSize: 22, color: Colors.grey),),
-                      ],
-                    ),
-                    SizedBox(height: 5,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(animal.birthDate,
-                          style: TextStyle(fontSize: 22, color: Colors.grey),),
-                        Text("  "),
-                        Text(animal.agroProprietary,
-                          style: TextStyle(fontSize: 22, color: Colors.grey),),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            Row(
+              children: [
+                Text(animal.name,
+                  style: TextStyle(fontSize: 26, color: Colors.black),),
+                Text("  "),
+                Text(animal.specie,
+                  style: TextStyle(fontSize: 22, color: Colors.grey),),
+              ],
+            ),
+            SizedBox(height: 5,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(animal.birthDate,
+                  style: TextStyle(fontSize: 22, color: Colors.grey),),
+                Text("A-"+ animal.agroProprietary.split(" | ").last + "/" + animal.proprietary.split(" | ").last,
+                  style: TextStyle(fontSize: 22, color: Colors.grey),),
+              ],
             ),
           ],
         ),
@@ -226,7 +214,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 onChanged: changedDropDownSpecie,
               ),
               Text("  "),
-              Text('Proprietário', style: TextStyle(fontSize: 22),),
+              Text('Proprietário Agro', style: TextStyle(fontSize: 22),),
               SizedBox(
                 width: 20,
               ),
