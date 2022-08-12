@@ -1,3 +1,4 @@
+import 'package:FarmControl/pages/reports/reports_mating_page.dart';
 import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/nav.dart';
 import 'package:FarmControl/widgets/my_drawer.dart';
@@ -38,6 +39,7 @@ class _ReportsPageState extends State<ReportsPage> {
           children: <Widget>[
             listTitle("Bovinos", context, ReportsList(), Icons.list),
             listTitle("Equinos", context, ReportsList(), Icons.list),
+            listTitle("Previsões de parto", context, MatingReports(), Icons.list),
           ],
         ),
       );

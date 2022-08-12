@@ -58,12 +58,12 @@ class UserRepository {
   }
 
   Future<bool> isSignedIn() async {
-    final currentUser = _firebaseAuth.currentUser;
+    final currentUser = await _firebaseAuth.currentUser;
     return currentUser != null;
   }
 
   Future<String> getUser() async {
-    return (_firebaseAuth.currentUser).uid;
+    return await (_firebaseAuth.currentUser).uid;
   }
   
   Future<dynamic> updatePassword(String pass)async {

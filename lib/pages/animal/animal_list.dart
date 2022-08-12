@@ -50,6 +50,8 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   void initState() {
     super.initState();
     presenter.getAnimals();
+    _initSpecies();
+    _initProprietaries();
   }
 
   @override
@@ -79,7 +81,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   }
 
   _body(BuildContext context){
-    if(ApplicationSingleton.currentUser == null) {
+    if(ApplicationSingleton.baseAuth.isSignedIn() == false) {
       redirectLogin(context);
     }
     else {
@@ -92,8 +94,6 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         return emptyContainer("Nenhum animal encontrado");
       }
       else {
-        _initSpecies();
-        _initProprietaries();
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: RefreshIndicator(
@@ -377,7 +377,6 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     if(!propValue.contains("Todos")){
       anims = anims.where((element) => element.agroProprietary.contains(propValue)).toList();
     }
-    print(anims);
     setState(() {
       this.animals = anims;
       totalAnimal = anims.length;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:FarmControl/pages/login/login_presenter.dart';
+import 'package:FarmControl/utils/ApplicationSingleton.dart';
 import 'package:FarmControl/utils/Components.dart';
 import 'package:FarmControl/utils/Constants.dart';
 import 'package:FarmControl/utils/nav.dart';
@@ -42,6 +43,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
     _presenter = LoginPresenter(this);
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _isSignedIn();
+  }
+
+  _isSignedIn() async {
+    if(ApplicationSingleton.baseAuth.isSignedIn() == true){
+      ApplicationSingleton.currentUser = await ApplicationSingleton.baseAuth.getUser();
+      navigatorReplace(context, Constants.ANIMAL_LIST_PAGE);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

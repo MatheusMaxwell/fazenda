@@ -15,6 +15,8 @@ class Animal {
   String fileName;
   String buyDate;
   String saleDate;
+  String matingDate; //acasalamento
+  String matingBy;
 
   Animal({this.id, this.specie, this.name, this.sex, this.birthDate, this.lossDate, this.agroProprietary });
 
@@ -31,7 +33,9 @@ class Animal {
       urlFile = map['urlFile'] ?? '',
       fileName = map['fileName'] ?? '',
       buyDate = map['buyDate'] ?? '',
-      saleDate = map['saleDate'] ?? '';
+      saleDate = map['saleDate'] ?? '',
+      matingDate = map['matingDate'] ?? '',
+      matingBy = map['matingBy'] ?? '';
 
   toJson(){
     return{
@@ -46,7 +50,9 @@ class Animal {
       "urlFile": urlFile,
       "fileName": fileName,
       "buyDate": buyDate,
-      "saleDate": saleDate
+      "saleDate": saleDate,
+      "matingDate": matingDate,
+      "matingBy": matingBy
     };
   }
 

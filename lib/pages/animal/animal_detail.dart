@@ -1,7 +1,9 @@
 import 'dart:js' as js;
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:FarmControl/model/animal.dart';
+import 'package:jiffy/jiffy.dart';
 import '../../utils/ApplicationSingleton.dart';
 import '../../utils/Components.dart';
 
@@ -68,8 +70,12 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   if(animal.buyDate.isNotEmpty) _space(),
                   if(animal.buyDate.isNotEmpty) _animalField('Data Compra: ', animal.buyDate),
                   if(animal.saleDate.isNotEmpty) _space(),
-                  if(animal.saleDate.isNotEmpty) _animalField('Data Venda: ', animal.saleDate)
-
+                  if(animal.saleDate.isNotEmpty) _animalField('Data Venda: ', animal.saleDate),
+                  if(animal.matingDate.isNotEmpty) _space(),
+                  if(animal.matingDate.isNotEmpty) _animalField('Data Cobrição: ', animal.matingDate),
+                  if(animal.matingDate.isNotEmpty && animal.matingBy.isNotEmpty) _animalField('Cobrição por: ', animal.matingBy),
+                  if(animal.matingDate.isNotEmpty) _space(),
+                  if(animal.matingDate.isNotEmpty) _animalField('Previsão de parto: ', _prediction(animal.matingDate, animal.specie))
                 ]
               ),
               ),
@@ -95,6 +101,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
         )
       ],
     );
+  }
+
+  String _prediction(String matingDate, String specie){
+    var days = specie.toLowerCase() == "bovino" ? 283 : 340;
+    var date = Jiffy(matingDate, 'dd/MM/yyyy').add(days: days);
+
+    return formatDate(date, [dd, '/', mm, '/', yyyy]);
   }
 
   _animalField(String field, String value){

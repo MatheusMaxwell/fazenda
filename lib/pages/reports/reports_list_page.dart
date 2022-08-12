@@ -38,12 +38,13 @@ class _ReportsListState extends State<ReportsList> {
   @override
   void initState() {
     ApplicationSingleton.matrixDocument = List<Matrix>();
+    getAnimals(propValue);
+    getProprietaries();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context){
-    getAnimals(propValue);
     if(refreshing){
       return Center(
         child: CircularProgressIndicator(),
@@ -111,7 +112,6 @@ class _ReportsListState extends State<ReportsList> {
   }
 
   _body(){
-    getProprietaries();
     List<String> proprietariesString = new List<String>();
     proprietariesString.add('Todos');
     for(var p in proprietaries){
@@ -205,7 +205,6 @@ class _ReportsListState extends State<ReportsList> {
         var today = Jiffy(DateTime.now());
         var month = Jiffy(anim.birthDate, 'dd/MM/yyyy').diff(today, Units.MONTH);
         month = month * -1;
-        print("Animal: "+anim.name+" meses: "+month.toString());
         if( month >= min && month <= max){
           if(isMale){
             if(anim.sex.contains("Macho")){

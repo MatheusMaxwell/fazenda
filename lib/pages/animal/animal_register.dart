@@ -44,10 +44,12 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   bool checkLossDate = false;
   bool checkBuyDate = false;
   bool checkSaleDate = false;
+  bool checkMatingDate = false;
   bool updating = true;
   bool isUpdate = false;
   final nameController = TextEditingController();
   final codeController = TextEditingController();
+  final matingByController = TextEditingController();
   File mFile = null;
   bool isInitialBuild = true;
 
@@ -78,6 +80,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
       _animal = ApplicationSingleton.animal;
       nameController.text = _animal.name;
       codeController.text = _animal.code;
+      matingByController.text = _animal.matingBy;
       if(_animal.lossDate.isNotEmpty) {
         checkLossDate = true;
       }
@@ -86,6 +89,9 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
       }
       if(_animal.saleDate.isNotEmpty) {
         checkSaleDate = true;
+      }
+      if(_animal.matingDate.isNotEmpty){
+        checkMatingDate = true;
       }
     }
     else{
@@ -128,7 +134,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
           children: <Widget>[
                 _dropDown("Espécie", _animal.specie, _dropDownSpecies,
                     changedDropDownItem), //arrumar
-                textInput(true, TextInputType.text, "Nome"),
+                textInput(TextInputEnum.name, TextInputType.text, "Nome"),
                 _dropDown(
                     "Sexo", _animal.sex, _dropDownSexItems,
                     changedDropDownItemSex),
@@ -166,7 +172,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                     changedDropDownProprietary),
                 _dropDown("Proprietário Agro", _animal.agroProprietary,
                     _dropDownProprietaries, changedDropDownProprietaryAgro),
-                textInput(false, TextInputType.number, "Código brinco"),
+                textInput(TextInputEnum.code, TextInputType.number, "Código brinco"),
                 SizedBox(
                   height: 15,
                 ),
@@ -191,7 +197,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                   ],
                 ),
                 // ignore: sdk_version_ui_as_code
-                if(checkBuyDate) _datePickerOther(true),
+                if(checkBuyDate) _datePickerOther(DateEnum.buy),
                 SizedBox(
                   height: 15,
                 ),
@@ -216,7 +222,30 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                   ],
                 ),
                 // ignore: sdk_version_ui_as_code
-                if(checkSaleDate) _datePickerOther(false),
+                if(checkSaleDate) _datePickerOther(DateEnum.sale),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        "Data Cobrição", style: TextStyle(fontSize: 17),),
+                    ),
+                    Checkbox(
+                      value: checkMatingDate,
+                      onChanged: (bool value) {
+                        setState(() {
+                          if(!value){
+                            _animal.matingDate = "";
+                          }
+                          checkMatingDate = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                // ignore: sdk_version_ui_as_code
+                if(checkMatingDate) _datePickerOther(DateEnum.mating),
+                if(checkMatingDate) textInput(TextInputEnum.matingBy, TextInputType.text, "Cobrição por"),
                 _fileRow(_animal.fileName),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -294,26 +323,28 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
 
   }
   
-  textInput(bool isName, TextInputType type, String hint){
+  textInput(TextInputEnum textInput, TextInputType type, String hint){
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextField(
-                controller: isName ? nameController : codeController,
+                controller: textInput == TextInputEnum.name ? nameController : (textInput == TextInputEnum.code) ? codeController : matingByController,
                 decoration: InputDecoration(
                   hintText: hint,
                 ),
                 keyboardType: type,
                 onChanged: (value) {
-                  if(isName){
+                  if(textInput == TextInputEnum.name){
                     _animal.name = value;
                   }
-                  else{
+                  else if(textInput == TextInputEnum.code){
                     _animal.code = value;
                   }
-                  
+                  else if(textInput == TextInputEnum.matingBy){
+                    _animal.matingBy = value;
+                  }
                 },
               ),
             ]
@@ -452,25 +483,37 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
 
   }
 
-  _datePickerOther(bool isDateBuy){
+  _datePickerOther(DateEnum dateEnum){
     if(isUpdate){
-      if(isDateBuy){
+      if(dateEnum == DateEnum.buy){
         if(_animal.buyDate.isNotEmpty){
           date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.buyDate).toString());
         }
         else{
           date = DateTime.now();
+          _animal.buyDate = formatDate(date, [dd, '/', mm, '/', yyyy]);
         }
       }
-      else{
+      else if(dateEnum == DateEnum.sale){
         if(_animal.saleDate.isNotEmpty){
           date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.saleDate).toString());
         }
         else{
           date = DateTime.now();
+          _animal.saleDate = formatDate(date, [dd, '/', mm, '/', yyyy]);
+        }
+      }
+      else if(dateEnum == DateEnum.mating){
+        if(_animal.matingDate.isNotEmpty){
+          date = DateTime.parse(DateFormat("dd/MM/yyyy").parse(_animal.matingDate).toString());
+        }
+        else{
+          date = DateTime.now();
+          _animal.matingDate = formatDate(date, [dd, '/', mm, '/', yyyy]);
         }
       }
     }
+
     return FlatButton(
       child: Row(
         children: <Widget>[
@@ -486,11 +529,14 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
             lastDate: DateTime(DateTime.now().year+1));
         if(dtPicker != null && dtPicker != date){
           setState(() {
-            if(isDateBuy){
+            if(dateEnum == DateEnum.buy){
               _animal.buyDate = formatDate(dtPicker, [dd, '/', mm, '/', yyyy]);
             }
-            else{
+            else if(dateEnum == DateEnum.sale){
               _animal.saleDate = formatDate(dtPicker, [dd, '/', mm, '/', yyyy]);
+            }
+            else if(dateEnum == DateEnum.mating){
+              _animal.matingDate = formatDate(dtPicker, [dd, '/', mm, '/', yyyy]);
             }
             date = dtPicker;
           });
@@ -637,4 +683,15 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
   }
 }
 
+enum DateEnum {
+  buy,
+  sale,
+  mating
+}
+
+enum TextInputEnum {
+  name,
+  code,
+  matingBy
+}
 
