@@ -40,6 +40,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   String searchField = "";
   int totalAnimal = 0;
   List<Animal> animalsImmutableTotal;
+  bool isPropAgro = false;
 
 
   _AnimalListState(){
@@ -50,8 +51,8 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   void initState() {
     super.initState();
     presenter.getAnimals();
-    _initSpecies();
-    _initProprietaries();
+    getSpecies();
+    getProprietaries();
   }
 
   @override
@@ -214,7 +215,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 onChanged: changedDropDownSpecie,
               ),
               Text("  "),
-              Text('Proprietário Agro', style: TextStyle(fontSize: 22),),
+              Text('Proprietário ', style: TextStyle(fontSize: 22),),
               SizedBox(
                 width: 20,
               ),
@@ -223,6 +224,16 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 value: propValue,
                 items: _dropDownProprietaries,
                 onChanged: changedDropDownProps,
+              ),
+              Text(" Agro?", style: TextStyle(fontSize: 22)),
+              Checkbox(
+                value: isPropAgro,
+                onChanged: (bool value) {
+                  setState(() {
+                    isPropAgro = value;
+                    changedDropDownProps(propValue);
+                  });
+                },
               ),
               Spacer(),
               IconButton(
@@ -276,27 +287,43 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
 
   getSpecies()async{
     var specs = List<Specie>();
+    List<String> speciesString = new List<String>();
+    speciesString.add('Todas');
     if(speciesDrop == null || speciesDrop.isEmpty){
       specs = await presenter.getSpeciesAndReturn();
     }
     else{
       specs = speciesDrop;
     }
+
+    for(var p in specs){
+      speciesString.add(p.specie);
+    }
+
     setState((){
       speciesDrop = specs;
+      _dropDownSpecies = getDropDownMenuItems(speciesString);
     });
   }
 
   getProprietaries()async{
     var props = List<Proprietary>();
+    List<String> propString = new List<String>();
+    propString.add('Todos');
     if(propDrop == null || propDrop.isEmpty){
       props = await presenter.getProprietariesAndReturn();
     }
     else{
       props = propDrop;
     }
+
+    for(var p in props){
+      propString.add(p.name + " | " + p.mark);
+    }
+
     setState((){
       propDrop = props;
+      _dropDownProprietaries = getDropDownMenuItems(propString);
     });
   }
 
@@ -330,27 +357,6 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     _tapPosition = details.globalPosition;
   }
 
-  _initSpecies(){
-    getSpecies();
-    List<String> speciesString = new List<String>();
-    speciesString.add('Todas');
-    for(var p in speciesDrop){
-      speciesString.add(p.specie);
-    }
-    _dropDownSpecies = getDropDownMenuItems(speciesString);
-  }
-
-  _initProprietaries(){
-    getProprietaries();
-    List<String> propString = new List<String>();
-    propString.add('Todos');
-    for(var p in propDrop){
-      propString.add(p.name + " | " + p.mark);
-    }
-    _dropDownProprietaries = getDropDownMenuItems(propString);
-  }
-
-
   @override
   void animalsIsEmpty() {
     setState(() {
@@ -375,7 +381,12 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       anims = anims.where((element) => element.specie.contains(specieValue)).toList();
     }
     if(!propValue.contains("Todos")){
-      anims = anims.where((element) => element.agroProprietary.contains(propValue)).toList();
+      if(isPropAgro){
+        anims = anims.where((element) => element.agroProprietary.contains(propValue)).toList();
+      }
+      else{
+        anims = anims.where((element) => element.proprietary.contains(propValue)).toList();
+      }
     }
     setState(() {
       this.animals = anims;

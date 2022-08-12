@@ -30,15 +30,17 @@ class _ReportsListState extends State<ReportsList> {
   var _apiAnimal = AnimalApi();
   var _apiProp = ProprietaryApi();
   List<Animal> animals = List<Animal>();
+  List<Animal> animalsImmutable = List<Animal>();
   List<Proprietary> proprietaries = List<Proprietary>();
   int matrixRow = 0;
   Matrix matrix = Matrix();
   bool refreshing = true;
+  bool isPropAgro = false;
 
   @override
   void initState() {
     ApplicationSingleton.matrixDocument = List<Matrix>();
-    getAnimals(propValue);
+    getAnimals();
     getProprietaries();
     super.initState();
   }
@@ -79,26 +81,27 @@ class _ReportsListState extends State<ReportsList> {
     }
   }
 
-  getAnimals(String propValue)async{
+  getAnimals()async{
     var anims = await _apiAnimal.getAnimals();
-    List<Animal> ret = List<Animal>();
-    if(!propValue.contains("Todos")){
-      for(var a in anims){
-        if(a.agroProprietary.contains(propValue)){
-          ret.add(a);
-        }
-      }
-    }
-    else{
-      ret = anims;
-    }
-    for(var a in ret){
-      if(a.lossDate.isNotEmpty || a.saleDate.isNotEmpty){
-        ret.remove(a);
-      }
-    }
+    animalsImmutable = anims;
+    //List<Animal> ret = List<Animal>();
+    // if(!propValue.contains("Todos")){
+    //   for(var a in anims){
+    //     if(a.agroProprietary.contains(propValue)){
+    //       ret.add(a);
+    //     }
+    //   }
+    // }
+    // else{
+    //   ret = anims;
+    // }
+    // for(var a in anims){
+    //   if(a.lossDate.isNotEmpty || a.saleDate.isNotEmpty){
+    //     anims.remove(a);
+    //   }
+    // }
     setState((){
-      animals = ret;
+      animals = anims.where((element) => element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
       refreshing = false;
     });
 
@@ -133,6 +136,16 @@ class _ReportsListState extends State<ReportsList> {
                   value: propValue,
                   items: _dropDownProprietaries,
                   onChanged: changedDropDownProprietary,
+                ),
+                Text(" Agro?", style: TextStyle(fontSize: 26)),
+                Checkbox(
+                  value: isPropAgro,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isPropAgro = value;
+                      changedDropDownProprietary(propValue);
+                    });
+                  },
                 ),
               ],
             ),
@@ -376,6 +389,17 @@ class _ReportsListState extends State<ReportsList> {
   void changedDropDownProprietary(String _selectedProp) {
     setState(() {
       propValue = _selectedProp;
+      if(_selectedProp == "Todos"){
+        animals = animalsImmutable;
+      }
+      else{
+        if(isPropAgro){
+          animals = animalsImmutable.where((element) => element.agroProprietary.toLowerCase().contains(_selectedProp.toLowerCase()) && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
+        }
+        else{
+          animals = animalsImmutable.where((element) => element.proprietary.toLowerCase().contains(_selectedProp.toLowerCase()) && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
+        }
+      }
     });
   }
 
