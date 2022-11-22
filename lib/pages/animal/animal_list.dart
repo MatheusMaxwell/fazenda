@@ -41,6 +41,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   int totalAnimal = 0;
   List<Animal> animalsImmutableTotal;
   bool isPropAgro = false;
+  bool isLossOrSale = false;
 
 
   _AnimalListState(){
@@ -162,6 +163,8 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 Text("  "),
                 Text(animal.specie,
                   style: TextStyle(fontSize: 22, color: Colors.grey),),
+                Spacer(),
+                if(animal.saleDate.isNotEmpty || animal.lossDate.isNotEmpty) Icon(Icons.arrow_circle_down, color: Colors.red,)
               ],
             ),
             SizedBox(height: 5,),
@@ -169,7 +172,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(animal.birthDate,
+                Text(getDate(animal),
                   style: TextStyle(fontSize: 22, color: Colors.grey),),
                 Text("A-"+ animal.agroProprietary.split(" | ").last + "/" + animal.proprietary.split(" | ").last,
                   style: TextStyle(fontSize: 22, color: Colors.grey),),
@@ -179,6 +182,16 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
         ),
       ),
     );
+  }
+  
+  getDate(Animal animal){
+    if(animal.lossDate.isNotEmpty){
+      return "M - "+animal.lossDate;
+    }
+    if(animal.saleDate.isNotEmpty){
+      return "V - "+animal.saleDate;
+    }
+    return animal.birthDate;
   }
 
   _header(){
@@ -242,6 +255,21 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
               )
             ],
           ),
+          Row(
+            children: [
+              Text("Perda ou venda?", style: TextStyle(fontSize: 22)),
+              Checkbox(
+                value: isLossOrSale,
+                onChanged: (bool value) {
+                  setState(() {
+                    isLossOrSale = value;
+                    listAnimals(null);
+                  });
+                },
+              ),
+            ],
+          )
+
         ],
       ),
     );
@@ -387,6 +415,9 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       else{
         anims = anims.where((element) => element.proprietary.contains(propValue)).toList();
       }
+    }
+    if(isLossOrSale){
+      anims = anims.where((element) => element.lossDate.isNotEmpty || element.saleDate.isNotEmpty).toList();
     }
     setState(() {
       this.animals = anims;

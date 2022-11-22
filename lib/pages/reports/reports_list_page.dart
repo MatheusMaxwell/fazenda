@@ -184,23 +184,23 @@ class _ReportsListState extends State<ReportsList> {
         padding: const EdgeInsets.all(20.0),
         shrinkWrap: false,
         children: <Widget>[
-          cardReport("0 - 12 M", getQtdAnimals(true, 0, 12, "Bovino"), getQtdAnimals(false, 0, 12, "Bovino")),
+          cardReport("0 - 12 M", getQtdAnimals(true, -1, 13, "Bovino"), getQtdAnimals(false, -1, 13, "Bovino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("13 - 24 M", getQtdAnimals(true, 13, 24, "Bovino"), getQtdAnimals(false, 13, 24, "Bovino")),
+          cardReport("13 - 24 M", getQtdAnimals(true, 12.99, 25, "Bovino"), getQtdAnimals(false, 12.99, 25, "Bovino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("25 - 36 M", getQtdAnimals(true, 25, 36, "Bovino"), getQtdAnimals(false, 25, 36, "Bovino")),
+          cardReport("25 - 36 M", getQtdAnimals(true, 24.99, 36, "Bovino"), getQtdAnimals(false, 24.99, 36, "Bovino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("> 36 M", getQtdAnimals(true, 36, 1000, "Bovino"), getQtdAnimals(false, 36, 1000, "Bovino")),
+          cardReport("> 36 M", getQtdAnimals(true, 35.99, 10000, "Bovino"), getQtdAnimals(false, 35.99, 1000, "Bovino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("Total", getQtdAnimals(true, 0, 1000,"Bovino"), getQtdAnimals(false, 0, 1000, "Bovino")),
+          cardReport("Total", getQtdAnimals(true, -1, 10000,"Bovino"), getQtdAnimals(false, -1, 1000, "Bovino")),
           SizedBox(
             height: 20,
           ),
@@ -209,7 +209,7 @@ class _ReportsListState extends State<ReportsList> {
     );
   }
 
-  int getQtdAnimals(bool isMale, int min, int max, String specie){
+  int getQtdAnimals(bool isMale, double min, double max, String specie){
     int count = 0;
 
     for(var anim in animals){
@@ -218,15 +218,17 @@ class _ReportsListState extends State<ReportsList> {
         var today = Jiffy(DateTime.now());
         var month = Jiffy(anim.birthDate, 'dd/MM/yyyy').diff(today, Units.MONTH);
         month = month * -1;
-        if( month >= min && month <= max){
-          if(isMale){
-            if(anim.sex.contains("Macho")){
-              count = count + 1;
+        if( month > min && month < max){
+          if(anim.lossDate.isEmpty && anim.saleDate.isEmpty){
+            if(isMale){
+              if(anim.sex.contains("Macho")){
+                count = count + 1;
+              }
             }
-          }
-          else{
-            if(anim.sex.contains("Femea")){
-              count = count + 1;
+            else{
+              if(anim.sex.contains("Femea")){
+                count = count + 1;
+              }
             }
           }
         }
