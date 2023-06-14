@@ -83,7 +83,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: RaisedButton(
+          child: MaterialButton(
             color: Colors.blueGrey,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)

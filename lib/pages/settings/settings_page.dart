@@ -107,13 +107,13 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           actions: <Widget>[
-            FlatButton(
+            MaterialButton(
               child: new Text("Cancelar"),
               onPressed: (){
                 Navigator.of(context).pop("");
               },
             ),
-            FlatButton(
+            MaterialButton(
               child: new Text("Ok"),
               onPressed: () {
                 if(_newPassField1Controller.text == _newPassField2Controller.text){

@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
                                                 key: _globalKey,
                                                 height: 48.0,
                                                 width: _width,
-                                                child: RaisedButton(
+                                                child: MaterialButton(
                                                   shape: new RoundedRectangleBorder( //Round up
                                                       borderRadius: new BorderRadius.circular(18)
                                                   ),
@@ -222,13 +222,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin imp
               ],
             ),
             actions: <Widget>[
-              FlatButton(
+              MaterialButton(
                 child: new Text("Cancelar"),
                 onPressed: (){
                   Navigator.of(context).pop("");
                 },
               ),
-              FlatButton(
+              MaterialButton(
                 child: new Text("Ok"),
                 onPressed: () {
                   if(_recoverEmailController.text.isNotEmpty){

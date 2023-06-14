@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 //Mostrar alerta na parte inferior da tela. -> final scaffoldKey = new GlobalKey<ScaffoldState>();
 Function showSnackBar(String text, GlobalKey<ScaffoldState> scaffoldKey){
-  scaffoldKey.currentState.showSnackBar(new SnackBar(
-    content: new Text(text),
-  ));
+  ScaffoldMessenger.of(scaffoldKey.currentContext).showSnackBar(
+    SnackBar(content: Text(text))
+  );
 }
 
 //Alerta botao ok
@@ -18,7 +18,7 @@ Future<void> alertOk(BuildContext context, String title, String content) {
         title: Text(title),
         content: Text(content),
         actions: <Widget>[
-          FlatButton(
+          MaterialButton(
             child: Text('Ok'),
             onPressed: () {
               Navigator.of(context).pop();
@@ -39,13 +39,13 @@ Future<bool> alertYesOrNo(BuildContext context, String name, String content) {
         title: Text(name),
         content: Text(content),
         actions: <Widget>[
-          FlatButton(
+          MaterialButton(
             child: Text('Sim'),
             onPressed: () {
               Navigator.of(context).pop(true);
             },
           ),
-          FlatButton(
+          MaterialButton(
             child: Text('Não'),
             onPressed: () {
               Navigator.of(context).pop(false);

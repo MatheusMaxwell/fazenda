@@ -118,7 +118,7 @@ class _ReportsListState extends State<ReportsList> {
     List<String> proprietariesString = new List<String>();
     proprietariesString.add('Todos');
     for(var p in proprietaries){
-      proprietariesString.add(p.name);
+      proprietariesString.add(p.name + " | "+p.mark);
     }
     _dropDownProprietaries = getDropDownMenuItems(proprietariesString);
     return Column(
@@ -161,15 +161,15 @@ class _ReportsListState extends State<ReportsList> {
         padding: const EdgeInsets.all(20.0),
         shrinkWrap: false,
         children: <Widget>[
-          cardReport("0 - 6 M", getQtdAnimals(true, 0, 6, "Equino"), getQtdAnimals(false, 0, 6, "Equino")),
+          cardReport("0 - 6 M", getQtdAnimals(true, -1, 7, "Equino"), getQtdAnimals(false, 0, 6, "Equino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("> 6 M", getQtdAnimals(true, 6, 1000, "Equino"), getQtdAnimals(false, 6, 1000, "Equino")),
+          cardReport("> 6 M", getQtdAnimals(true, 6.99, 1000, "Equino"), getQtdAnimals(false, 6, 1000, "Equino")),
           SizedBox(
             height: 20,
           ),
-          cardReport("Total", getQtdAnimals(true, 0, 1000, "Equino"), getQtdAnimals(false, 0, 1000, "Equino")),
+          cardReport("Total", getQtdAnimals(true, -1, 1000, "Equino"), getQtdAnimals(false, 0, 1000, "Equino")),
           SizedBox(
             height: 20,
           ),
@@ -324,10 +324,10 @@ class _ReportsListState extends State<ReportsList> {
               SizedBox(
                 height: 10,
               ),
-              cardReport("0 - 2 M", -1, getQtdAnimals(false, 0, 2, "Bovino")),
-              cardReport("3 - 8 M", -1, getQtdAnimals(false, 3, 8, "Bovino")),
-              cardReport("9 - 12 M", -1, getQtdAnimals(false, 9, 12, "Bovino")),
-              cardReport("Total", -1, getQtdAnimals(false, 0, 12, "Bovino"))
+              cardReport("0 - 2 M", -1, getQtdAnimals(false, -1, 3, "Bovino")),
+              cardReport("3 - 8 M", -1, getQtdAnimals(false, 2.99, 9, "Bovino")),
+              cardReport("9 - 12 M", -1, getQtdAnimals(false, 8.99, 13, "Bovino")),
+              cardReport("Total", -1, getQtdAnimals(false, -1, 13, "Bovino"))
             ],
           ),
         );
@@ -367,9 +367,9 @@ class _ReportsListState extends State<ReportsList> {
               SizedBox(
                 height: 10,
               ),
-              cardReport("13 - 18 M", getQtdAnimals(true, 13, 18, "Bovino"), getQtdAnimals(false, 13, 18, "Bovino")),
-              cardReport("19 - 24 M", getQtdAnimals(true, 19, 24, "Bovino"), getQtdAnimals(false, 19, 24, "Bovino")),
-              cardReport("Total", getQtdAnimals(true, 13, 24, "Bovino"), getQtdAnimals(false, 13, 24, "Bovino"))
+              cardReport("13 - 18 M", getQtdAnimals(true, 12, 19, "Bovino"), getQtdAnimals(false, 12, 19, "Bovino")),
+              cardReport("19 - 24 M", getQtdAnimals(true, 18.99, 25, "Bovino"), getQtdAnimals(false, 18.99, 25, "Bovino")),
+              cardReport("Total", getQtdAnimals(true, 12, 25, "Bovino"), getQtdAnimals(false, 12, 25, "Bovino"))
             ],
           ),
         );
@@ -396,10 +396,10 @@ class _ReportsListState extends State<ReportsList> {
       }
       else{
         if(isPropAgro){
-          animals = animalsImmutable.where((element) => element.agroProprietary.toLowerCase().contains(_selectedProp.toLowerCase()) && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
+          animals = animalsImmutable.where((element) => element.agroProprietary.toLowerCase() == _selectedProp.toLowerCase() && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
         }
         else{
-          animals = animalsImmutable.where((element) => element.proprietary.toLowerCase().contains(_selectedProp.toLowerCase()) && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
+          animals = animalsImmutable.where((element) => element.proprietary.toLowerCase() == _selectedProp.toLowerCase() && element.lossDate.isEmpty && element.saleDate.isEmpty).toList();
         }
       }
     });

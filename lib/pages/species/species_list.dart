@@ -99,13 +99,13 @@ class _SpeciesListState extends State<SpecieList> implements SpecieContract{
             ],
           ),
           actions: <Widget>[
-            FlatButton(
+            MaterialButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop(specie);
               },
             ),
-            FlatButton(
+            MaterialButton(
               child: Text('Cancelar'),
               onPressed: (){
                 Navigator.of(context).pop();

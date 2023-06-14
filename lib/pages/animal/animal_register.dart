@@ -249,7 +249,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                 _fileRow(_animal.fileName),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: RaisedButton(
+                  child: MaterialButton(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0)
                     ),
@@ -263,7 +263,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      RaisedButton(
+                      MaterialButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0)
                         ),
@@ -454,7 +454,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
           }
         }
       }
-      return FlatButton(
+      return MaterialButton(
         child: Row(
           children: <Widget>[
             Text(formatDate(date, [dd, '/', mm, '/', yyyy])),
@@ -514,7 +514,7 @@ class AnimalRegister extends State<AnimalRegisterSetting> implements AnimalContr
       }
     }
 
-    return FlatButton(
+    return MaterialButton(
       child: Row(
         children: <Widget>[
           Text(formatDate(date, [dd, '/', mm, '/', yyyy])),

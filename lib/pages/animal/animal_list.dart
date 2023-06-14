@@ -36,6 +36,9 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   String specieValue = "Todas";
   String propValue = "Todos";
   List<Proprietary> propDrop = List<Proprietary>();
+  List<String> sexDrop = List<String>();
+  List<DropdownMenuItem<String>> _dropDownSex;
+  String sexValue = "Todos";
   List<DropdownMenuItem<String>> _dropDownProprietaries;
   String searchField = "";
   int totalAnimal = 0;
@@ -52,6 +55,7 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
   void initState() {
     super.initState();
     presenter.getAnimals();
+    getSex();
     getSpecies();
     getProprietaries();
   }
@@ -164,7 +168,8 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                 Text(animal.specie,
                   style: TextStyle(fontSize: 22, color: Colors.grey),),
                 Spacer(),
-                if(animal.saleDate.isNotEmpty || animal.lossDate.isNotEmpty) Icon(Icons.arrow_circle_down, color: Colors.red,)
+                if(animal.saleDate.isNotEmpty || animal.lossDate.isNotEmpty) Icon(Icons.arrow_circle_down, color: Colors.red,),
+                if(animal.sex.toLowerCase() == "macho") Icon(Icons.male, color: Colors.blue,) else Icon(Icons.female, color: Colors.pink,)
               ],
             ),
             SizedBox(height: 5,),
@@ -267,6 +272,19 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
                   });
                 },
               ),
+              SizedBox(
+                width: 20,
+              ),
+              Text('Sexo', style: TextStyle(fontSize: 22),),
+              SizedBox(
+                width: 20,
+              ),
+              DropdownButton(
+                hint: Text('Todos', style: TextStyle(fontSize: 20),),
+                value: sexValue,
+                items: _dropDownSex,
+                onChanged: changedDropDownSex,
+              ),
             ],
           )
 
@@ -295,6 +313,13 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
     });
   }
 
+  void changedDropDownSex(String _selected) {
+    setState(() {
+      sexValue = _selected;
+      listAnimals(null);
+    });
+  }
+
   void changedDropDownProps(String _selected) {
     setState(() {
       propValue = _selected;
@@ -311,6 +336,17 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       ));
     }
     return items;
+  }
+
+  getSex() async {
+    List<String> sexString = new List<String>();
+    sexString.add('Todos');
+    sexString.add("Macho");
+    sexString.add("Femea");
+    setState((){
+      sexDrop = sexString;
+      _dropDownSex = getDropDownMenuItems(sexString);
+    });
   }
 
   getSpecies()async{
@@ -415,6 +451,9 @@ class _AnimalListState extends State<AnimalList> implements AnimalContract{
       else{
         anims = anims.where((element) => element.proprietary.contains(propValue)).toList();
       }
+    }
+    if(!sexValue.contains("Todos")){
+      anims = anims.where((element) => element.sex.contains(sexValue)).toList();
     }
     if(isLossOrSale){
       anims = anims.where((element) => element.lossDate.isNotEmpty || element.saleDate.isNotEmpty).toList();

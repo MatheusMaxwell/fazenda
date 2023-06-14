@@ -116,13 +116,13 @@ class _ProprietaryListState extends State<ProprietaryList> implements Proprietar
             ],
           ),
           actions: <Widget>[
-            FlatButton(
+            MaterialButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop(prop);
               },
             ),
-            FlatButton(
+            MaterialButton(
               child: Text('Cancelar'),
               onPressed: (){
                 Navigator.of(context).pop();

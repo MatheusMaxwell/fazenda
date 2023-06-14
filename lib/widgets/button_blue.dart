@@ -15,7 +15,7 @@ class BlueButton extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-          child: RaisedButton(
+          child: MaterialButton(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0)
             ),
